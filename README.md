@@ -27,8 +27,8 @@ All of the data for this comes from attributes of the bars themselves, not their
 Evaluation is planned to include comparison between the actual content of the sources (e.g., with pitch class profile matching on each bar).
 - For an effectively aligned pair the match metrics will be high.
 - Without the ‘fix’
- - some simple files will happen to match well anyway
- - more complex ones will likely slip off in terms of alignment.
+  - some simple files will happen to match well anyway
+  - more complex ones will likely slip off in terms of alignment.
 
 It should be both easy and meaningful to demonstrate the benefit of the system in this way.
 
@@ -52,8 +52,8 @@ We limit ourselves to sources that a user defines to be equivalent (i.e., varian
 ### Main topics within scope:
 
 - Anacrusis:
- - by convention, when the first bar is "anacrustic" (incomplete) is should be numbered labelled 0.
- - This is not to be relied upon in practice.
+  - by convention, when the first bar is "anacrustic" (incomplete) is should be numbered labelled 0.
+  - This is not to be relied upon in practice.
 - Repeats:
   - typically at the end of a bar, 
   - nominally sometimes ‘within’ but
@@ -61,13 +61,13 @@ We limit ourselves to sources that a user defines to be equivalent (i.e., varian
 - First/second time bars:
   - Typically labelled '15a', '15b'
 - Re-starts:
- - E.g., theme and variations movements
+  - E.g., theme and variations movements
   - some editions number continuously while others re-start numbering from 1 (or 0) each time.
 - Special cases such as cadenzas notated variably in:
- - One very long measure
- - Many (often irregular) shorter ones
+  - One very long measure
+  - Many (often irregular) shorter ones
 - Complex repeat structures
- - E.g., da capo movements: "Menuetto Da capo" or "Da capo arias".
+  - E.g., da capo movements: "Menuetto Da capo" or "Da capo arias".
 
 ### Out of scope (for now):
 - material clearly present in one source and absent from another, e.g., Vivaldi _Gloria_ variants

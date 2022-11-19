@@ -21,7 +21,6 @@ More to follow ;)
 
 """
 
-
 # ------------------------------------------------------------------------------
 
 from music21 import converter, stream
@@ -43,17 +42,17 @@ def score_to_measure_map(path_to_score: str,
     """
     score = converter.parse(path_to_score)
     part = score.parts[0]
-    
+
     mm = part_to_measure_map(part)
-    
+
     if not check_parts_match:
         return mm
-    
+
     num_parts = len(score.parts)
 
     if num_parts < 2:
         return mm
-    
+
     for p in range(1, num_parts):
         thisMM = part_to_measure_map(score.part[p])
         if thisMM != mm:
@@ -67,9 +66,9 @@ def part_to_measure_map(thisPart: stream.Part) -> list:
     """
     measure_map = []
     measure_count = 1
-    
+
     currentTS = 'Fake'
-    
+
     for m in thisPart.recurse().getElementsByClass(stream.Measure):
 
         this_measure_dict = {'measure_count': measure_count,
@@ -86,10 +85,10 @@ def part_to_measure_map(thisPart: stream.Part) -> list:
             this_measure_dict['time_signature'] = currentTS
 
         # TODO: Repeats, first/second time etc
-        
+
         measure_map.append(this_measure_dict)
         measure_count += 1
-    
+
     return measure_map
 
 
@@ -101,24 +100,34 @@ class Test(unittest.TestCase):
     """
 
     def testExampleCase(self):
-        
         testScore = converter.parse('./Example/measuringBarsExample.mxl')
-        
+
         mm = part_to_measure_map(testScore.parts[0])
-        
+
         self.assertEqual(mm,
-            [{'measure_count': 1, 'offset': 0.0, 'measure_number': 0, 'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
-            {'measure_count': 2, 'offset': 1.0, 'measure_number': 1, 'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
-            {'measure_count': 3, 'offset': 5.0, 'measure_number': 2, 'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
-            {'measure_count': 4, 'offset': 8.0, 'measure_number': 3, 'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
-            {'measure_count': 5, 'offset': 9.0, 'measure_number': 4, 'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
-            {'measure_count': 6, 'offset': 13.0, 'measure_number': 5, 'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
-            {'measure_count': 7, 'offset': 17.0, 'measure_number': 6, 'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
-            {'measure_count': 8, 'offset': 20.0, 'measure_number': 7, 'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
-            {'measure_count': 9, 'offset': 24.0, 'measure_number': 8, 'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
-            {'measure_count': 10, 'offset': 28.0, 'measure_number': 9, 'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'}
-            ]
-        )
+                         [
+                             {'measure_count': 1, 'offset': 0.0, 'measure_number': 0,
+                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
+                             {'measure_count': 2, 'offset': 1.0, 'measure_number': 1,
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                             {'measure_count': 3, 'offset': 5.0, 'measure_number': 2,
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
+                             {'measure_count': 4, 'offset': 8.0, 'measure_number': 3,
+                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
+                             {'measure_count': 5, 'offset': 9.0, 'measure_number': 4,
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                             {'measure_count': 6, 'offset': 13.0, 'measure_number': 5,
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                             {'measure_count': 7, 'offset': 17.0, 'measure_number': 6,
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
+                             {'measure_count': 8, 'offset': 20.0, 'measure_number': 7,
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                             {'measure_count': 9, 'offset': 24.0, 'measure_number': 8,
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                             {'measure_count': 10, 'offset': 28.0, 'measure_number': 9,
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'}
+                         ]
+                         )
 
 
 # ------------------------------------------------------------------------------

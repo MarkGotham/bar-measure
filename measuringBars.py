@@ -62,7 +62,17 @@ def score_to_measure_map(path_to_score: str,
 def part_to_measure_map(thisPart: stream.Part) -> list:
     """
     Mapping from a music21.stream.part
-    to a "measure map" (currently a list of dicts).
+    to a "measure map": currently a list of dicts with the following keys:
+        'measure_count': int,  # all represented, in natural numbers
+        'offset': int | float,  # quarterLength from beginning
+        'measure_number' / tag: int | str,  # constraints are conventional only
+        'time_signature': str | music21.meter.TimeSignature,
+        'nominal_length': int | float  # NB can derive nominal_length from TS but not vice versa
+        'actual_length': int | float,  # expressed in quarterLength. Could also be as proportion
+        TODO:
+        'has_start_repeat': bool,
+        'has_end_repeat': bool
+    TODO: any others? 'has_ending': bool?
     """
     measure_map = []
     measure_count = 1

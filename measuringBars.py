@@ -54,7 +54,7 @@ def score_to_measure_map(path_to_score: str,
     if num_parts < 2:
         return mm
     
-    for p in range(1, len(num_parts)):
+    for p in range(1, num_parts):
         thisMM = part_to_measure_map(score.part[p])
         if thisMM != mm:
             raise ValueError(f'Parts 0 and {p} do not match.')
@@ -72,14 +72,11 @@ def part_to_measure_map(thisPart: stream.Part) -> list:
     
     for m in thisPart.recurse().getElementsByClass(stream.Measure):
 
-        this_measure_dict = {}
-
-        this_measure_dict['measure_count'] = measure_count
-        this_measure_dict['offset'] = m.offset
-        this_measure_dict['measure_number'] = m.measureNumber
-        
-        this_measure_dict['nominal_length'] = m.barDuration.quarterLength
-        this_measure_dict['actual_length'] = m.duration.quarterLength
+        this_measure_dict = {'measure_count': measure_count,
+                             'offset': m.offset,
+                             'measure_number': m.measureNumber,
+                             'nominal_length': m.barDuration.quarterLength,
+                             'actual_length': m.duration.quarterLength}
 
         ts = m.timeSignature
         if ts:
@@ -125,5 +122,6 @@ class Test(unittest.TestCase):
 
 
 # ------------------------------------------------------------------------------
+
 if __name__ == '__main__':
     unittest.main()

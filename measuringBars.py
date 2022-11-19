@@ -94,6 +94,63 @@ def part_to_measure_map(thisPart: stream.Part) -> list:
 
 # ------------------------------------------------------------------------------
 
+def diagnose(preferred_part: stream.Part,
+             other_part: stream.Part,
+             attempt_fix: bool = True):
+    """
+    Attempt to diagnose the differences between two measure maps and
+    optionally attempt to align them (if argument "fix" is True).
+    """
+    preferred_measure_map = part_to_measure_map(preferred_part)
+    other_measure_map = part_to_measure_map(other_part)
+
+    if preferred_measure_map == other_measure_map:
+        print("The two measure maps are identical, no change needed. Done.")
+        return
+
+    if len(preferred_measure_map) == len(other_measure_map):
+        print("Different total number of measures, change needed ... ")
+        pass
+        # TODO for each kind of issue and (if attempt_fix) also proposed solution.
+
+
+def fix(part_to_fix: stream.Part):
+    """
+    Having diagnosed the difference(s), attempt to fix one part by:
+    - re-numbering the bars
+    - expanding/contracting repeats
+    etc
+    """
+    pass
+    # TODO
+
+
+def impose_numbering_standard(part_to_fix: stream.Part):
+    """
+    Impose the relatively standard practice of numbering measure:
+    - 0 for an initial anacrusis
+    - 1, 2, 3, ... for each subsequent full measures
+    - etc.
+    This can be used as a fix for known issues, or
+    preemptively to attempt to enforce identical numbering in the first place
+    (before even extracting the measure maps).
+    """
+    pass
+    # TODO
+
+
+# ------------------------------------------------------------------------------
+
+def write_measure_map_to_sv(measure_map: dict, verbose: bool = False):
+    """
+    Writes a measure map to a tsv or csv file.
+    """
+    pass
+    # TODO
+
+
+# ------------------------------------------------------------------------------
+
 class Test(unittest.TestCase):
     """
     First test example. More to follow.

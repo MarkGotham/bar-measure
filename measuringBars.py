@@ -23,8 +23,9 @@ More to follow ;)
 
 # ------------------------------------------------------------------------------
 
-from music21 import converter, stream
+from music21 import *
 import unittest
+import csv
 
 
 # ------------------------------------------------------------------------------
@@ -43,23 +44,23 @@ def score_to_measure_map(path_to_score: str,
     score = converter.parse(path_to_score)
     part = score.parts[0]
 
-    mm = part_to_measure_map(part)
+    measure_map = part_to_measure_map(part)
 
     if not check_parts_match:
-        return mm
+        return measure_map
 
     num_parts = len(score.parts)
 
     if num_parts < 2:
-        return mm
+        return measure_map
 
-    for p in range(1, num_parts):
-        thisMM = part_to_measure_map(score.part[p])
-        if thisMM != mm:
-            raise ValueError(f'Parts 0 and {p} do not match.')
+    for part in range(1, num_parts):
+        part_measure_map = part_to_measure_map(score.part[part])
+        if part_measure_map != measure_map:
+            raise ValueError(f'Parts 0 and {part} do not match.')
 
 
-def part_to_measure_map(thisPart: stream.Part) -> list:
+def part_to_measure_map(this_part: stream.Part) -> list:
     """
     Mapping from a music21.stream.part
     to a "measure map": currently a list of dicts with the following keys:
@@ -74,32 +75,41 @@ def part_to_measure_map(thisPart: stream.Part) -> list:
         'has_end_repeat': bool
     TODO: any others? 'has_ending': bool?
     """
-    measure_map = []
+    sheet_measure_map = []
     measure_count = 1
 
-    currentTS = 'Fake'
+    has_end_repeat = False
+    has_start_repeat = False
 
-    for m in thisPart.recurse().getElementsByClass(stream.Measure):
+    time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
 
-        this_measure_dict = {'measure_count': measure_count,
-                             'offset': m.offset,
-                             'measure_number': m.measureNumber,
-                             'nominal_length': m.barDuration.quarterLength,
-                             'actual_length': m.duration.quarterLength}
+    for measure in this_part.recurse().getElementsByClass(stream.Measure):
+        if measure.timeSignature:
+            time_sig = measure.timeSignature.ratioString
 
-        ts = m.timeSignature
-        if ts:
-            this_measure_dict['time_signature'] = ts.ratioString
-            currentTS = ts.ratioString
-        else:
-            this_measure_dict['time_signature'] = currentTS
+        if measure.leftBarline:
+            if measure.leftBarline == bar.Repeat(direction='start'):
+                has_start_repeat = True
+        if measure.rightBarline:
+            if measure.rightBarline == bar.Repeat(direction='end'):
+                has_end_repeat = True
+
+        measure_dict = {
+            "measure_count": measure_count,
+            "offset": measure.offset,
+            "measure_number": measure.measureNumber,
+            "nominal_length": measure.barDuration.quarterLength,
+            "actual_length": measure.duration.quarterLength,
+            "time_signature": time_sig,
+            "has_start_repeat": has_start_repeat,
+            "has_end_repeat": has_end_repeat
+        }
+        sheet_measure_map.append(measure_dict)
+        measure_count += 1
 
         # TODO: Repeats, first/second time etc
 
-        measure_map.append(this_measure_dict)
-        measure_count += 1
-
-    return measure_map
+    return sheet_measure_map
 
 
 # ------------------------------------------------------------------------------
@@ -151,12 +161,24 @@ def impose_numbering_standard(part_to_fix: stream.Part):
 
 # ------------------------------------------------------------------------------
 
-def write_measure_map_to_sv(measure_map: dict, verbose: bool = False):
+def write_measure_map_to_sv(measure_map: list, path: str = None, field_names: list = None, verbose: bool = False):
     """
     Writes a measure map to a tsv or csv file.
     """
-    pass
-    # TODO
+    if field_names is None:
+        field_names = ['measure_count', 'offset', 'measure_number', 'nominal_length', 'actual_length', 'time_signature',
+                       'has_end_repeat', 'has_start_repeat']
+    # elif:
+    # if field_names don't match/not subset
+    data = measure_map
+    if path is None:
+        path = 'Example/measure_map.csv'
+    with open(path, 'w', encoding='UTF8', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(data)
+
+    # Verbose - only sig diff measures
 
 
 # ------------------------------------------------------------------------------
@@ -174,27 +196,49 @@ class Test(unittest.TestCase):
         self.assertEqual(mm,
                          [
                              {'measure_count': 1, 'offset': 0.0, 'measure_number': 0,
-                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 2, 'offset': 1.0, 'measure_number': 1,
-                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 3, 'offset': 5.0, 'measure_number': 2,
-                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 4, 'offset': 8.0, 'measure_number': 3,
-                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 1.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 5, 'offset': 9.0, 'measure_number': 4,
-                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 6, 'offset': 13.0, 'measure_number': 5,
-                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 7, 'offset': 17.0, 'measure_number': 6,
-                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 8, 'offset': 20.0, 'measure_number': 7,
-                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 9, 'offset': 24.0, 'measure_number': 8,
-                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4'},
+                              'nominal_length': 4.0, 'actual_length': 4.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, },
                              {'measure_count': 10, 'offset': 28.0, 'measure_number': 9,
-                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4'}
+                              'nominal_length': 4.0, 'actual_length': 3.0, 'time_signature': '4/4',
+                              'has_end_repeat': False,
+                              'has_start_repeat': False, }
                          ]
                          )
+
+        write_measure_map_to_sv(mm)
 
 
 # ------------------------------------------------------------------------------

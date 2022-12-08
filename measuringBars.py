@@ -197,7 +197,7 @@ def write_measure_map_to_sv(measure_map: list, path: str = None, field_names: li
         path = 'Example/measure_map.csv'
 
     with open(path, 'w', encoding='UTF8', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=field_names, quotechar="'", quoting=csv.QUOTE_NONNUMERIC)
+        writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
         writer.writeheader()
         if not verbose:
             writer.writerow(data[0])

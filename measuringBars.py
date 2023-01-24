@@ -55,11 +55,8 @@ class Compare:
         self.preferred_length = len(self.preferred_measure_map)
         self.other_length = len(self.other_measure_map)
 
-        self.diagnosis = self.diagnose()
-
-        if isinstance(self.diagnosis, str):
-            print(self.diagnosis)
-            return
+        self.diagnosis = []
+        self.diagnose()
 
     def diagnose(self, attempt_fix: bool = False):
         """
@@ -80,36 +77,83 @@ class Compare:
 
         if not mismatch_offsets and not mismatch_measure_number and not mismatch_time_signature and not mismatch_repeats \
                 and self.preferred_length == self.other_length:
-            return "These two measure maps seem to be identical."
+            return None
 
         if self.preferred_length != self.other_length:
             if not self.preferred_expanded:
                 self.try_expand()
             else:
-                shorter_length = min(self.preferred_length, self.other_length)
-                for i in range(shorter_length):
-                    if self.preferred_measure_map[i]['offset'] != self.other_measure_map[i]['offset']:
-                        return ""  # alignment
-                return "End padding"
-
-        if mismatch_measure_number:
-            if attempt_fix:
+                self.compare_lengths()
+                for change in self.diagnosis:
+                    if change[0] == "join":
+                        self.perform_join(change)
+                    elif change[0] == "split":
+                        self.perform_split(change)
                 return
-            else:
-                return "The measure numbers differ"
-            # renumber
 
-        if mismatch_offsets:
-            if mismatch_offsets[0]['measure_count'] == 1:
-                print()
-            return ""
+            if mismatch_measure_number:
+                if attempt_fix:
+                    return
+                else:
+                    return "The measure numbers differ"
+                # renumber
+
+            if mismatch_repeats:
+                return
 
         # TODO for each kind of issue and (if attempt_fix) also proposed solution.
 
+    def perform_split(self, change):
+        self.other_measure_map.insert(change[1] + 1, self.other_measure_map.other_measure_map[change[1]])
+        self.other_measure_map[change[1]]['actual_length'] = change[2]
+        self.other_measure_map[change[1] + 1]['actual_length'] = self.other_measure_map[change[1] + 1]['actual_length'] - change[2]
+        self.other_measure_map[change[1]]['has_start_repeat'] = False
+        self.other_measure_map[change[1]]['has_end_repeat'] = False  # Repeats?
+        self.other_measure_map[change[1]]['next_measure'] = [change[1] + 1]
+        for measure in self.other_measure_map:
+            if measure['measure_number'] > change[1]:
+                measure['measure_count'] += 1
+                measure['measure_number'] += 1
+                for next_measure in measure['next_measure']:
+                    if next_measure > change[1]:
+                        next_measure += 1
+
+    def perform_join(self, change):
+        self.other_measure_map[change[1]]['actual_length'] = self.preferred_measure_map[change[1]]['actual_length']
+        for next_measure in self.other_measure_map[change[1]]['next_measure']:
+            if next_measure > change[1]:
+                next_measure -= 1
+        del self.other_measure_map[change[1] + 1]
+        for measure in self.other_measure_map:
+            if measure['measure_number'] > change[1]:
+                measure['measure_count'] -= 1
+                measure['measure_number'] -= 1
+                for next_measure in measure['next_measure']:
+                    if next_measure > change[1]:
+                        next_measure -= 1
+
     def try_expand(self):
-        self.preferred_expanded = stream_to_measure_map(self.preferred_score.expandRepeats())
+        self.preferred_expanded = stream_to_measure_map(self.preferred_score.expandRepeats())  # TODO: Expand repeats without music21
         self.other_expanded = stream_to_measure_map(self.other_score.expandRepeats())
         self.diagnose()
+
+    def compare_lengths(self):
+        preferred_step = 0
+        other_step = 0
+
+        for i in range(self.preferred_length):
+            if self.preferred_measure_map[i + preferred_step]['actual_length'] != \
+                    self.other_measure_map[i + other_step]['actual_length']:
+                if self.preferred_measure_map[i + preferred_step]['actual_length'] == \
+                        self.other_measure_map[i + other_step]['actual_length'] + \
+                        self.other_measure_map[i + other_step + 1]['actual_length']:
+                    self.diagnosis.append(("join", i + other_step))
+                    other_step += 1
+                elif self.preferred_measure_map[i + preferred_step]['actual_length'] + \
+                        self.preferred_measure_map[i + preferred_step + 1]['actual_length'] == \
+                        self.other_measure_map[i]['actual_length']:
+                    self.diagnosis.append(("split", i + other_step, self.preferred_measure_map[i + preferred_step]['actual_length']))
+                    preferred_step += 1
 
 
 # ------------------------------------------------------------------------------
@@ -162,10 +206,15 @@ def part_to_measure_map(this_part: stream.Part) -> list:
         'has_end_repeat': bool
     """
     sheet_measure_map = []
-    measure_count = 1
     go_back_to = 1
     go_forward_from = 1
     time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
+
+    if this_part.recurse().getElementsByClass(stream.Measure)[0].barDuration.quarterLength != \
+            this_part.recurse().getElementsByClass(stream.Measure)[0].duration.quarterLength:
+        measure_count = 0
+    else:
+        measure_count = 1  # Is measure_count or measure_number the preferred end numbering?
 
     for measure in this_part.recurse().getElementsByClass(stream.Measure):
         has_end_repeat = False
@@ -205,6 +254,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
             'has_start_repeat': has_start_repeat,
             'has_end_repeat': has_end_repeat,
             'next_measure': next_measure
+            # Pitches? music21 reliant! evaluation?
         }
 
         sheet_measure_map.append(measure_dict)
@@ -247,7 +297,7 @@ def needleman_wunsch(preferred_measure_map, other_measure_map):
     m = len(other_measure_map)
     gap_penalty = 2
     match_score = 10
-    mismatch_score = -5
+    mismatch_score = -5  # prioritise one larger gap rather than lots of smaller gaps?
 
     dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
     for i in range(1, n + 1):
@@ -314,7 +364,7 @@ def write_measure_map_to_sv(measure_map: list, path: str = None, field_names: li
             data[i][given_key] = measure_map[i].get(given_key)
 
     if path is None:
-        path = 'Example/measure_map.csv'
+        path = 'Example/measure_map.csv'  # Direction of slashes?
 
     with open(path, 'w', encoding='UTF8', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
@@ -339,7 +389,7 @@ class Test(unittest.TestCase):
     """
 
     def test_example_case(self):
-        measure_map = stream_to_measure_map(converter.parse('./Example/measuringBarsExample.mxl'))
+        """measure_map = stream_to_measure_map(converter.parse('./Examples/core.mxl'))
 
         self.assertEqual(measure_map,
                          [{'measure_count': 1, 'offset': 0.0, 'measure_number': 0, 'nominal_length': 4.0,
@@ -371,9 +421,21 @@ class Test(unittest.TestCase):
                            'has_end_repeat': False, 'next_measure': [10]},
                           {'measure_count': 10, 'offset': 28.0, 'measure_number': 9, 'nominal_length': 4.0,
                            'actual_length': 3.0, 'time_signature': '4/4', 'has_start_repeat': False,
-                           'has_end_repeat': False, 'next_measure': []}])
+                           'has_end_repeat': False, 'next_measure': []}])"""
 
-        print(stream_to_measure_map(converter.parse('./Example/measuringBarsExample.mxl')))
+        """temp1 = stream_to_measure_map(converter.parse('./Examples/core.mxl'))
+        temp2 = stream_to_measure_map(converter.parse('./Examples/missing_1st_time.mxl'))
+        input1 = [measure['actual_length'] for measure in temp1]
+        input2 = [measure['actual_length'] for measure in temp2]
+        print(input1)
+        input1[2] = 4.0
+        del input1[3]
+        print(input1)
+        output1, output2 = needleman_wunsch(input1, input2)
+        print("Alignment 1:", output1)
+        print("Alignment 2:", output2)
+
+        Compare.__init__()"""
 
 
 # ------------------------------------------------------------------------------

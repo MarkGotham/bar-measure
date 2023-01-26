@@ -32,6 +32,7 @@ import csv
 
 class Compare:
     def __init__(self, preferred, other):
+        self.other_renumbered = None
         self.preferred_expanded = None
         self.other_expanded = None
 
@@ -77,7 +78,24 @@ class Compare:
 
         if not mismatch_offsets and not mismatch_measure_number and not mismatch_time_signature and not mismatch_repeats \
                 and self.preferred_length == self.other_length:
-            return None
+            for change in self.diagnosis:
+                if change[0] == "Join":
+                    print(f"Join measures {change[1]} and {change[1] + 1} in the 2nd.")
+                elif change[0] == "Split":
+                    print(f"Split measure {change[1]} at offset {change[2]} in the 2nd.")
+                elif change[0] == "Expand_Repeats":
+                    print("Expand the repeats.")  # Update for which measure map needs expanding
+                elif change[0] == "Renumber":
+                    print("Renumber the measures in the 2nd.")
+                elif change[0] == "repeat_marks":
+                    print()
+                elif change[0] == "Add":
+                    print()
+                elif change[0] == "Remove":
+                    print()
+                else:
+                    print()
+            return
 
         if self.preferred_length != self.other_length:
             if not self.preferred_expanded:
@@ -85,26 +103,25 @@ class Compare:
             else:
                 self.compare_lengths()
                 for change in self.diagnosis:
-                    if change[0] == "join":
+                    if change[0] == "Join":
                         self.perform_join(change)
-                    elif change[0] == "split":
+                    elif change[0] == "Split":
                         self.perform_split(change)
                 return
 
-            if mismatch_measure_number:
-                if attempt_fix:
-                    return
-                else:
-                    return "The measure numbers differ"
-                # renumber
+        if mismatch_measure_number:
+            if not self.other_renumbered:
+                self.try_renumber()
+            return
 
-            if mismatch_repeats:
-                return
+        if mismatch_repeats:
+            return
+            # TODO
 
         # TODO for each kind of issue and (if attempt_fix) also proposed solution.
 
     def perform_split(self, change):
-        self.other_measure_map.insert(change[1] + 1, self.other_measure_map.other_measure_map[change[1]])
+        self.other_measure_map.insert(change[1] + 1, self.other_measure_map[change[1]])
         self.other_measure_map[change[1]]['actual_length'] = change[2]
         self.other_measure_map[change[1] + 1]['actual_length'] = self.other_measure_map[change[1] + 1]['actual_length'] - change[2]
         self.other_measure_map[change[1]]['has_start_repeat'] = False
@@ -135,7 +152,20 @@ class Compare:
     def try_expand(self):
         self.preferred_expanded = stream_to_measure_map(self.preferred_score.expandRepeats())  # TODO: Expand repeats without music21
         self.other_expanded = stream_to_measure_map(self.other_score.expandRepeats())
+        self.diagnosis.append(("Expand_Repeats", "Both"))  # Update for which measure map needs expanding
+        self.preferred_measure_map = self.preferred_expanded
+        self.other_measure_map = self.other_expanded
+        self.preferred_length = len(self.preferred_measure_map)
+        self.other_length = len(self.other_measure_map)
         self.diagnose()
+
+    def try_renumber(self):
+        self.other_renumbered = self.other_measure_map
+        for measure in self.other_renumbered:
+            measure['measure_number'] = self.other_measure_map[measure['measure_count'] - 1]['measure_number']
+            self.diagnosis.append(("Renumber", "all"))
+        self.other_measure_map = self.other_renumbered
+        self.other_length = len(self.other_renumbered)
 
     def compare_lengths(self):
         preferred_step = 0
@@ -147,12 +177,12 @@ class Compare:
                 if self.preferred_measure_map[i + preferred_step]['actual_length'] == \
                         self.other_measure_map[i + other_step]['actual_length'] + \
                         self.other_measure_map[i + other_step + 1]['actual_length']:
-                    self.diagnosis.append(("join", i + other_step))
+                    self.diagnosis.append(("Join", i + other_step))
                     other_step += 1
                 elif self.preferred_measure_map[i + preferred_step]['actual_length'] + \
                         self.preferred_measure_map[i + preferred_step + 1]['actual_length'] == \
                         self.other_measure_map[i]['actual_length']:
-                    self.diagnosis.append(("split", i + other_step, self.preferred_measure_map[i + preferred_step]['actual_length']))
+                    self.diagnosis.append(("Split", i + other_step, self.preferred_measure_map[i + preferred_step]['actual_length']))
                     preferred_step += 1
 
 
@@ -210,11 +240,13 @@ def part_to_measure_map(this_part: stream.Part) -> list:
     go_forward_from = 1
     time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
 
-    if this_part.recurse().getElementsByClass(stream.Measure)[0].barDuration.quarterLength != \
+    """if this_part.recurse().getElementsByClass(stream.Measure)[0].barDuration.quarterLength != \
             this_part.recurse().getElementsByClass(stream.Measure)[0].duration.quarterLength:
         measure_count = 0
     else:
         measure_count = 1  # Is measure_count or measure_number the preferred end numbering?
+        # Is anacrusis accounted for in measure.measureNumber? If not, where do we account for it?"""
+    measure_count = 1
 
     for measure in this_part.recurse().getElementsByClass(stream.Measure):
         has_end_repeat = False

@@ -99,12 +99,7 @@ def part_to_measure_map(
     go_back_to = 1
     go_forward_from = 1
     time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
-
-    if this_part.recurse().getElementsByClass(stream.Measure)[0].barDuration.quarterLength != \
-            this_part.recurse().getElementsByClass(stream.Measure)[0].duration.quarterLength:
-        measure_count = 0
-    else:
-        measure_count = 1  # Is measure_count or measure_number the preferred end numbering?
+    measure_count = 1
 
     for measure in this_part.recurse().getElementsByClass(stream.Measure):
         has_end_repeat = False
@@ -124,8 +119,7 @@ def part_to_measure_map(
         if has_start_repeat:  # Crude method to add next measure information including for multiple endings from repeats
             go_back_to = measure_count
         elif measure.leftBarline:
-            if measure.leftBarline.type == "regular" and sheet_measure_map[measure_count - 2][
-                "has_end_repeat"]:
+            if measure.leftBarline.type == "regular" and sheet_measure_map[measure_count - 2]["has_end_repeat"]:
                 sheet_measure_map[go_forward_from - 1]["next_measure"].append(measure_count)
             elif measure.leftBarline.type == "regular":
                 go_forward_from = measure_count - 1

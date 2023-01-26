@@ -19,6 +19,7 @@ This module implements demonstration using music21.
 # ------------------------------------------------------------------------------
 
 import csv
+import json
 import os
 from music21 import bar, converter, stream
 
@@ -41,6 +42,14 @@ class Aligner:
         # MM
         self.preferred_measure_map = stream_to_measure_map(self.preferred)
         self.other_measure_map = stream_to_measure_map(self.other)
+
+
+def generate_examples(path_to_examples: str = '../Examples/'):
+    for file in os.listdir(path_to_examples):
+        if file.endswith(".mxl"):
+            score = converter.parse(path_to_examples + file)
+            measure_map = stream_to_measure_map(score)
+            write_measure_map(measure_map, path_to_examples + file.removesuffix(".mxl") + "_measure_map.json")
 
 
 def stream_to_measure_map(
@@ -94,12 +103,13 @@ def part_to_measure_map(
         "actual_length": int | float,  # expressed in quarterLength. Could also be as proportion
         "has_start_repeat": bool,
         "has_end_repeat": bool
+        "next_measure": lst of str
     """
     sheet_measure_map = []
     go_back_to = 1
     go_forward_from = 1
     time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
-    measure_count = 1
+    measure_count = 0
 
     for measure in this_part.recurse().getElementsByClass(stream.Measure):
         has_end_repeat = False
@@ -120,17 +130,17 @@ def part_to_measure_map(
             go_back_to = measure_count
         elif measure.leftBarline:
             if measure.leftBarline.type == "regular" and sheet_measure_map[measure_count - 2]["has_end_repeat"]:
-                sheet_measure_map[go_forward_from - 1]["next_measure"].append(measure_count)
+                sheet_measure_map[go_forward_from - 1]["next_measure"].append(str(measure_count))
             elif measure.leftBarline.type == "regular":
                 go_forward_from = measure_count - 1
         if has_end_repeat:
-            next_measure.append(go_back_to)
+            next_measure.append(str(go_back_to))
         if measure_count + 1 <= len(this_part.recurse().getElementsByClass(stream.Measure)) and \
                 not (has_end_repeat and measure_count > go_forward_from != 1):
-            next_measure.append(measure_count + 1)
+            next_measure.append(str(measure_count + 1))
 
         measure_dict = {
-            "measure_count": measure_count,
+            "measure_count": measure_count + 1,
             "offset": measure.offset,
             "measure_number": measure.measureNumber,
             "nominal_length": measure.barDuration.quarterLength,
@@ -187,11 +197,12 @@ def impose_numbering_standard(
 
 # ------------------------------------------------------------------------------
 
-def write_measure_map_to_sv(
+def write_measure_map(
         measure_map: list,
-        path: str = None,
+        path: str,
         field_names: list = None,
-        verbose: bool = True
+        verbose: bool = True,
+        output: str = "json"
 ):
     """
     Writes a measure map to a tsv or csv file.
@@ -217,22 +228,27 @@ def write_measure_map_to_sv(
         for given_key in field_names:
             data[i][given_key] = measure_map[i].get(given_key)
 
-    if path is None:
-        path = "Example/measure_map.csv"  # Direction of slashes?
-
-    with open(path, "w", encoding="UTF8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writeheader()
-        if not verbose:
-            writer.writerow(data[0])
-            for i in range(1, len(data)):
-                for name in dictionary_keys:
-                    if measure_map[i].get(name) != measure_map[i - 1].get(name) and \
-                            name not in ["measure_count", "offset", "measure_number",
-                                         "next_measure"]:
-                        writer.writerow(data[i])
-                        break
-        else:
-            writer.writerows(data)
+    if output == "json":
+        with open(path, 'w') as file:
+            json.dump(data, file, indent=4)
+    if output == "csv":
+        with open(path, "w", encoding="UTF8", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
+            writer.writeheader()
+            if not verbose:
+                writer.writerow(data[0])
+                for i in range(1, len(data)):
+                    for name in dictionary_keys:
+                        if measure_map[i].get(name) != measure_map[i - 1].get(name) and \
+                                name not in ["measure_count", "offset", "measure_number",
+                                             "next_measure"]:
+                            writer.writerow(data[i])
+                            break
+            else:
+                writer.writerows(data)
 
 # ------------------------------------------------------------------------------
+
+
+generate_examples()
+generate_examples("../Example_core/")

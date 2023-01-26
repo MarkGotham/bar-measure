@@ -1,6 +1,6 @@
 """
 ===============================
-Measuring Bars (measuringBars.py)
+Measuring Bars (measuring_bars.py)
 ===============================
 
 Mark Gotham, 2022

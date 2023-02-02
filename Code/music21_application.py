@@ -27,10 +27,7 @@ from music21 import bar, converter, stream
 # ------------------------------------------------------------------------------
 
 class Aligner:
-    def __init__(self,
-                 path_to_preferred: os.PathLike,
-                 path_to_other: os.PathLike,
-                 ):
+    def __init__(self, path_to_preferred: os.PathLike, path_to_other: os.PathLike):
         # Paths
         self.path_to_preferred = path_to_preferred
         self.path_to_other = path_to_other
@@ -52,10 +49,7 @@ def generate_examples(path_to_examples: str = '../Examples/'):
             write_measure_map(measure_map, path_to_examples + file.removesuffix(".mxl") + "_measure_map.json")
 
 
-def stream_to_measure_map(
-        this_stream: stream.Stream,
-        check_parts_match: bool = True
-) -> list:
+def stream_to_measure_map(this_stream: stream.Stream, check_parts_match: bool = True) -> list:
     """
     Maps from a music21 stream
     to a possible version of the "measure map".
@@ -89,9 +83,7 @@ def stream_to_measure_map(
     return measure_map
 
 
-def part_to_measure_map(
-        this_part: stream.Part
-) -> list:
+def part_to_measure_map(this_part: stream.Part) -> list:
     """
     Mapping from a music21.stream.part
     to a "measure map": currently a list of dicts with the following keys:
@@ -109,7 +101,7 @@ def part_to_measure_map(
     go_back_to = 1
     go_forward_from = 1
     time_sig = this_part.getElementsByClass(stream.Measure)[0].timeSignature.ratioString
-    measure_count = 0
+    measure_count = 1
 
     for measure in this_part.recurse().getElementsByClass(stream.Measure):
         has_end_repeat = False
@@ -130,14 +122,14 @@ def part_to_measure_map(
             go_back_to = measure_count
         elif measure.leftBarline:
             if measure.leftBarline.type == "regular" and sheet_measure_map[measure_count - 2]["has_end_repeat"]:
-                sheet_measure_map[go_forward_from - 1]["next_measure"].append(str(measure_count))
+                sheet_measure_map[go_forward_from - 1]["next_measure"].append(measure_count)
             elif measure.leftBarline.type == "regular":
                 go_forward_from = measure_count - 1
         if has_end_repeat:
-            next_measure.append(str(go_back_to))
+            next_measure.append(go_back_to)
         if measure_count + 1 <= len(this_part.recurse().getElementsByClass(stream.Measure)) and \
                 not (has_end_repeat and measure_count > go_forward_from != 1):
-            next_measure.append(str(measure_count + 1))
+            next_measure.append(measure_count + 1)
 
         measure_dict = {
             "measure_count": measure_count + 1,
@@ -159,10 +151,7 @@ def part_to_measure_map(
 
 # ------------------------------------------------------------------------------
 
-def fix(
-        part_to_fix: stream.Part,
-        diagnosis: list
-):
+def fix(part_to_fix: stream.Part, diagnosis: list):
     """
     Having diagnosed the difference(s), attempt to fix.
     """
@@ -170,10 +159,7 @@ def fix(
     # TODO
 
 
-def impose_numbering_standard(
-        part_to_fix: stream.Part,
-        standard: str = "Measure Count"
-):
+def impose_numbering_standard(part_to_fix: stream.Part, standard: str = "Measure Count"):
     """
     Impose a standard for numbering measure.
     TODO Initial implementation for either of the following:
@@ -197,19 +183,15 @@ def impose_numbering_standard(
 
 # ------------------------------------------------------------------------------
 
-def write_measure_map(
-        measure_map: list,
-        path: str,
-        field_names: list = None,
-        verbose: bool = True,
-        output: str = "json"
-):
+def write_measure_map(measure_map: list, path: str = None, field_names: list = None, verbose: bool = True,
+                      outformat: str = "json"):
     """
     Writes a measure map to a tsv or csv file.
     """
     dictionary_keys = ["measure_count",
                        "offset",
                        "measure_number",
+                       "split",
                        "nominal_length",
                        "actual_length",
                        "time_signature",
@@ -228,12 +210,19 @@ def write_measure_map(
         for given_key in field_names:
             data[i][given_key] = measure_map[i].get(given_key)
 
-    if output == "json":
+    if path is None:
+        path = "./measure_map." + outformat
+
+    if outformat == "json":
         with open(path, 'w') as file:
             json.dump(data, file, indent=4)
-    if output == "csv":
+    elif outformat == "csv" or "tsv":
         with open(path, "w", encoding="UTF8", newline="") as file:
-            writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
+            if outformat == "csv":
+                writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC)
+            else:
+                writer = csv.DictWriter(file, fieldnames=field_names, quoting=csv.QUOTE_NONNUMERIC, delimiter='\t',
+                                        lineterminator='\n')
             writer.writeheader()
             if not verbose:
                 writer.writerow(data[0])
@@ -246,6 +235,8 @@ def write_measure_map(
                             break
             else:
                 writer.writerows(data)
+    else:
+        raise ValueError(f"Unsupported file format '{outformat}' given")
 
 # ------------------------------------------------------------------------------
 

@@ -176,12 +176,17 @@ def perform_split(other, change):
     other[change[1]]['split'] = "b"
     other[change[1] - 1]['has_start_repeat'] = False
     other[change[1] - 1]['has_end_repeat'] = False  # Repeats?
-    other[change[1] - 1]['next_measure'] = [str(other[change[1]]['measure_number']) + "b"]
+    other[change[1] - 1]['next_measure'] = [other[change[1]]['measure_count'] + 1]
 
     for i in range(change[1], len(other)):
         other[i]['measure_count'] += 1
+        other[i]['next_measure'] = [value + 1 for value in other[i]['next_measure']]
 
     return other
+
+
+def perform_repeat_copy():
+    print()
 
 
 # ------------------------------------------------------------------------------
@@ -189,9 +194,10 @@ def perform_split(other, change):
 def needleman_wunsch(preferred_measure_map, other_measure_map):
     n = len(preferred_measure_map)
     m = len(other_measure_map)
-    gap_penalty = 2
-    match_score = 10
-    mismatch_score = -5  # prioritise one larger gap rather than lots of smaller gaps?
+    match_score = 1
+    mismatch_score = -1
+    gap_penalty = -2  # prioritise one larger gap rather than lots of smaller gaps?
+    # continue_gap_penalty = -1
 
     dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
     for i in range(1, n + 1):

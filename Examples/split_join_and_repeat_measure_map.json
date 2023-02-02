@@ -1,6 +1,6 @@
 [
     {
-        "measure_count": 2,
+        "measure_count": 1,
         "offset": 0.0,
         "measure_number": 0,
         "split": null,
@@ -14,7 +14,7 @@
         ]
     },
     {
-        "measure_count": 3,
+        "measure_count": 2,
         "offset": 1.0,
         "measure_number": 1,
         "split": null,
@@ -28,7 +28,7 @@
         ]
     },
     {
-        "measure_count": 4,
+        "measure_count": 3,
         "offset": 5.0,
         "measure_number": 2,
         "split": null,
@@ -42,7 +42,7 @@
         ]
     },
     {
-        "measure_count": 5,
+        "measure_count": 4,
         "offset": 9.0,
         "measure_number": 3,
         "split": null,
@@ -57,7 +57,7 @@
         ]
     },
     {
-        "measure_count": 6,
+        "measure_count": 5,
         "offset": 13.0,
         "measure_number": 4,
         "split": null,
@@ -71,7 +71,7 @@
         ]
     },
     {
-        "measure_count": 7,
+        "measure_count": 6,
         "offset": 17.0,
         "measure_number": 5,
         "split": null,
@@ -85,7 +85,7 @@
         ]
     },
     {
-        "measure_count": 8,
+        "measure_count": 7,
         "offset": 20.0,
         "measure_number": 6,
         "split": null,
@@ -99,7 +99,7 @@
         ]
     },
     {
-        "measure_count": 9,
+        "measure_count": 8,
         "offset": 24.0,
         "measure_number": 7,
         "split": null,
@@ -113,7 +113,7 @@
         ]
     },
     {
-        "measure_count": 10,
+        "measure_count": 9,
         "offset": 28.0,
         "measure_number": 8,
         "split": null,

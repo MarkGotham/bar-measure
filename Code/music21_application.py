@@ -132,7 +132,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
             next_measure.append(measure_count + 1)
 
         measure_dict = {
-            "measure_count": measure_count + 1,
+            "measure_count": measure_count,
             "offset": measure.offset,
             "measure_number": measure.measureNumber,
             "nominal_length": measure.barDuration.quarterLength,
@@ -241,5 +241,5 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
 # ------------------------------------------------------------------------------
 
 
-generate_examples()
-generate_examples("../Example_core/")
+# generate_examples()
+# generate_examples("../Example_core/")

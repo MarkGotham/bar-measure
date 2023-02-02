@@ -14,8 +14,8 @@ class Test(TestCase):
             preferred = json.load(file)
         with open('../Examples/split_join_and_repeat_measure_map.json', 'r') as file:
             other = json.load(file)
-        diagnosis = Compare(preferred, other).diagnose()
-        print(diagnosis)
+        output = Compare(preferred, other).diagnose()
+        self.assertEqual(output, preferred)
 
     def test_split(self):
         fake_measure_map = [{
@@ -34,7 +34,6 @@ class Test(TestCase):
                 "measure_count": 9,
                 "offset": 24.0,
                 "measure_number": 8,
-                "split": "a",
                 "nominal_length": 4.0,
                 "actual_length": 2.0,
                 "time_signature": "4/4",
@@ -43,9 +42,8 @@ class Test(TestCase):
                 "next_measure": [10]},
             {
                 "measure_count": 10,
-                "offset": 24.0,
-                "measure_number": 8,
-                "split": "b",
+                "offset": 26.0,
+                "measure_number": 9,
                 "nominal_length": 4.0,
                 "actual_length": 2.0,
                 "time_signature": "4/4",
@@ -67,7 +65,7 @@ class Test(TestCase):
             "time_signature": "4/4",
             "has_start_repeat": True,
             "has_end_repeat": False,
-            "next_measure": [9]}
+            "next_measure": [10]}
         ]
 
         other_measure_map = [{
@@ -79,8 +77,8 @@ class Test(TestCase):
             "time_signature": "4/4",
             "has_start_repeat": False,
             "has_end_repeat": False,
-            "next_measure": [9]}
+            "next_measure": [10]}
         ]
 
-        # perform_reapeat_copy()
+        perform_repeat_copy(preferred_measure_map, other_measure_map)
 

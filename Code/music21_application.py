@@ -21,24 +21,38 @@ This module implements demonstration using music21.
 import csv
 import json
 import os
-from music21 import bar, converter, stream
+from pathlib import *
+from music21 import *
+
+REPO_FOLDER = Path(__file__).parent.parent
 
 
 # ------------------------------------------------------------------------------
 
 class Aligner:
-    def __init__(self, path_to_preferred: os.PathLike, path_to_other: os.PathLike):
+    def __init__(self, path_to_preferred: Path, path_to_other: Path, write: bool = True, outpath: str = None):
         # Paths
         self.path_to_preferred = path_to_preferred
         self.path_to_other = path_to_other
 
         # Parsed
         self.preferred = converter.parse(self.path_to_preferred)
-        self.other = converter.parse(self.path_to_other)
+        if self.path_to_other.suffix == '.txt':
+            self.other = converter.parse(self.path_to_other, format='Romantext')
+        else:
+            self.other = converter.parse(self.path_to_other)
 
         # MM
         self.preferred_measure_map = stream_to_measure_map(self.preferred)
         self.other_measure_map = stream_to_measure_map(self.other)
+
+        if write:
+            if outpath is None:
+                outpath = path_to_preferred.parent
+            preferred_outpath = outpath / 'preferred_measure_map.json'
+            other_outpath = outpath / 'other_measure_map.json'
+            write_measure_map(self.preferred_measure_map, path=preferred_outpath)
+            write_measure_map(self.other_measure_map, path=other_outpath)
 
 
 def generate_examples(path_to_examples: str = '../Examples/'):
@@ -135,6 +149,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
             "measure_count": measure_count,
             "offset": measure.offset,
             "measure_number": measure.measureNumber,
+            # "suffix": measure.suffix,
             "nominal_length": measure.barDuration.quarterLength,
             "actual_length": measure.duration.quarterLength,
             "time_signature": time_sig,
@@ -159,7 +174,26 @@ def fix(part_to_fix: stream.Part, diagnosis: list):
     # TODO
 
 
-def impose_numbering_standard(part_to_fix: stream.Part, standard: str = "Measure Count"):
+def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
+    """
+    Split one measure on a part defined by the tuple in the form ("split", measure_count, offset)
+    """
+    assert diagnosis[0] == "Split"
+    assert len(diagnosis) == 3
+    assert isinstance(diagnosis[1], int)
+    assert isinstance(diagnosis[2], float)
+
+    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+    offset = measure.offset
+    first_part, second_part = measure.splitAtQuarterLength(diagnosis[2])
+    # second_part.removeClasses()  # TODO
+    second_part.number = first_part.measureNumber
+    first_part.numberSuffix = 'a'
+    second_part.numberSuffix = 'b'
+    part_to_fix.insert(offset + diagnosis[2], second_part)
+
+
+def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
     """
     Impose a standard for numbering measure.
     TODO Initial implementation for either of the following:
@@ -177,7 +211,32 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = "Measure
     preemptively to attempt to enforce identical numbering in the first place
     (before even extracting the measure maps).
     """
-    pass
+    measure_list = part_to_fix.getElementsByClass(stream.Measure)
+    if standard == "Full Measure":
+        count = 0
+        if measure_list[0].duration.quarterLength == measure_list[0].barDuration.quarterLength:
+            count += 1
+        measure_list[0].number = count
+        for index in range(len(measure_list) - 2):
+            measure = measure_list[index + 1]
+            if measure.quarterLength + measure_list[index + 2].quarterLength == measure.barDuration.quarterLength:
+                count += 1
+                measure.number = count
+                measure.numberSuffix = 'a'
+            elif measure.quarterLength + measure_list[index].quarterLength == measure_list[index].barDuration.quarterLength:
+                measure_list[index + 1].number = count
+                measure_list[index + 1].numberSuffix = 'b'
+            else:
+                count += 1
+                measure.number = count
+    elif standard == "Measure Count":
+        count = 1
+        for measure in measure_list:
+            measure.number = count
+            count += 1
+    else:
+        raise ValueError
+
     # TODO
 
 
@@ -191,7 +250,7 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
     dictionary_keys = ["measure_count",
                        "offset",
                        "measure_number",
-                       "split",
+                       # "suffix",
                        "nominal_length",
                        "actual_length",
                        "time_signature",
@@ -230,7 +289,7 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
                     for name in dictionary_keys:
                         if measure_map[i].get(name) != measure_map[i - 1].get(name) and \
                                 name not in ["measure_count", "offset", "measure_number",
-                                             "next_measure"]:
+                                             "next_measure", "suffix"]:
                             writer.writerow(data[i])
                             break
             else:
@@ -243,3 +302,5 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
 
 # generate_examples()
 # generate_examples("../Example_core/")
+
+

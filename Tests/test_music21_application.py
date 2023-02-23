@@ -3,10 +3,7 @@ Test the application to music21.
 """
 
 from unittest import TestCase
-
-from music21 import converter
-
-from Code.music21_application import stream_to_measure_map
+from Code.music21_application import *
 
 
 class Test(TestCase):
@@ -45,3 +42,21 @@ class Test(TestCase):
                           {'measure_count': 10, 'offset': 28.0, 'measure_number': 9, 'nominal_length': 4.0,
                            'actual_length': 3.0, 'time_signature': '4/4', 'has_start_repeat': False,
                            'has_end_repeat': False, 'next_measure': []}])
+
+    def test_split_measure(self):
+        s = corpus.parse("bach/bwv66.6").parts[0]
+        self.assertEqual(len(s), 11)
+        split_measure(s, ("Split", 6, 3.0))
+        self.assertEqual(len(s), 12)
+
+    def test_numbering_standards(self):
+        s = converter.parse("../Example_core/core.mxl").parts[0]
+        self.assertEqual(s.getElementsByClass(stream.Measure)[0].measureNumber, 0)
+        impose_numbering_standard(s, "Measure Count")
+        self.assertEqual(s.getElementsByClass(stream.Measure)[0].measureNumber, 1)
+
+        impose_numbering_standard(s, "Full Measure")
+        self.assertEqual(s.getElementsByClass(stream.Measure)[3].measureNumber, 2)
+
+        # TODO
+

@@ -22,7 +22,9 @@ import csv
 import json
 import os
 from pathlib import *
+
 from music21 import *
+import Code.measuring_bars
 
 REPO_FOLDER = Path(__file__).parent.parent
 
@@ -30,7 +32,7 @@ REPO_FOLDER = Path(__file__).parent.parent
 # ------------------------------------------------------------------------------
 
 class Aligner:
-    def __init__(self, path_to_preferred: Path, path_to_other: Path, write: bool = True, outpath: str = None):
+    def __init__(self, path_to_preferred: Path, path_to_other: Path, write: bool = True, outpath: str = None, attempt_fix: bool = False):
         # Paths
         self.path_to_preferred = path_to_preferred
         self.path_to_other = path_to_other
@@ -54,8 +56,35 @@ class Aligner:
             write_measure_map(self.preferred_measure_map, path=preferred_outpath)
             write_measure_map(self.other_measure_map, path=other_outpath)
 
+        if attempt_fix:
+            this_compare_object = Code.measuring_bars.Compare(self.preferred_measure_map, self.other_measure_map, attempt_fix=True)
+            for change in this_compare_object.diagnosis:  # TODO: Iterate through parts?
+                if change[0] == "Join":
+                    pass
+                    join_measure(self.other.parts[0], change)
+                    # TODO: implement join_measure
+                elif change[0] == "Split":
+                    split_measure(self.other.parts[0], change)
+                elif change[0] == "Expand_Repeats":
+                    expand_repeats(self.other)
+                elif change[0] == "Renumber":
+                    impose_numbering_standard(self.other.parts[0], "Full Measure")
+                elif change[0] == "Repeat_Marks":
+                    copy_repeat_marks(self.other.parts[0], change)
+                elif change[0] == "Measure_Length":
+                    copy_length(self.other.parts[0], change)
+                """elif change[0] == "Add":
+                elif change[0] == "Remove":"""
+
+            # self.other.parts[0].show('text')
+            # self.preferred.parts[0].show('text')
+
 
 def generate_examples(path_to_examples: str = '../Examples/'):
+    """
+    Generates json files of the measure map for each of our example mxl file in a specified folder
+    """
+
     for file in os.listdir(path_to_examples):
         if file.endswith(".mxl"):
             score = converter.parse(path_to_examples + file)
@@ -73,6 +102,7 @@ def stream_to_measure_map(this_stream: stream.Stream, check_parts_match: bool = 
     if True and the score has multiple parts, it will
     check that those parts return the same measurement information.
     """
+
     if isinstance(this_stream, stream.Part):
         return part_to_measure_map(this_stream)
 
@@ -111,6 +141,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
         "has_end_repeat": bool
         "next_measure": lst of str
     """
+
     sheet_measure_map = []
     go_back_to = 1
     go_forward_from = 1
@@ -125,7 +156,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
         if measure.timeSignature:
             time_sig = measure.timeSignature.ratioString
 
-        if measure.leftBarline:  # Only way for this to work seems to be to convert to strings? Object equality checks :- known issue with music21
+        if measure.leftBarline:  # TODO: Replace with normal equality checks
             if str(measure.leftBarline) == str(bar.Repeat(direction="start")):
                 has_start_repeat = True
         if measure.rightBarline:
@@ -166,18 +197,12 @@ def part_to_measure_map(this_part: stream.Part) -> list:
 
 # ------------------------------------------------------------------------------
 
-def fix(part_to_fix: stream.Part, diagnosis: list):
-    """
-    Having diagnosed the difference(s), attempt to fix.
-    """
-    pass
-    # TODO
-
 
 def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     """
     Split one measure on a part defined by the tuple in the form ("split", measure_count, offset)
     """
+
     assert diagnosis[0] == "Split"
     assert len(diagnosis) == 3
     assert isinstance(diagnosis[1], int)
@@ -186,17 +211,79 @@ def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
     offset = measure.offset
     first_part, second_part = measure.splitAtQuarterLength(diagnosis[2])
-    # second_part.removeClasses()  # TODO
+    # second_part.removeClasses()  # TODO?
     second_part.number = first_part.measureNumber
     first_part.numberSuffix = 'a'
     second_part.numberSuffix = 'b'
     part_to_fix.insert(offset + diagnosis[2], second_part)
+    removeDuplicates(part_to_fix)  # stream.tools.removeDuplicates(part_to_fix)
+
+
+def join_measure(part_to_fix: stream.Part, diagnosis: tuple):
+    """
+    Join two measures into one measure on a part defined by the tuple in the form ("Join", measure_count)
+    """
+
+    assert diagnosis[0] == "Join"
+    assert len(diagnosis) == 2
+    assert isinstance(diagnosis[1], int)
+
+    # TODO: implement join_measure
+    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+
+
+def expand_repeats(part_to_fix: stream.Stream):
+    """
+    Expand all the repeats in a part
+    """
+
+    expanded_part = part_to_fix.expandRepeats()
+    # expanded_part.show()
+    for measure in expanded_part.parts[0].getElementsByClass(stream.Measure):
+        if measure.measureNumber > 0:
+            measure.leftBarline = None
+            measure.rightBarline = None
+    expanded_part.parts[0].getElementsByClass(stream.Measure)[-1].rightBarline = bar.Barline(type = 'final')
+    # TODO: music21 keeps repeat Clef and TimeSig
+    removeDuplicates(expanded_part)  # stream.tools.removeDuplicates(expanded_part)
+    # expanded_part.show()
+    return expanded_part
+
+
+def copy_repeat_marks(part_to_fix: stream.Part, diagnosis: tuple):
+    """
+    Copy the repeat markings from the preferred part to the other part
+    """
+
+    assert diagnosis[0] == "Repeat_Marks"
+    assert len(diagnosis) == 3
+    assert isinstance(diagnosis[1], int)
+    assert isinstance(diagnosis[2], str)
+
+    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+    if diagnosis[2] == 'start':
+        measure.leftBarline = bar.Repeat(direction="start")
+    elif diagnosis[2] == 'end':
+        measure.rightBarline = bar.Repeat(direction="end")
+
+
+def copy_length(part_to_fix: stream.Part, diagnosis: tuple):
+    """
+    Copy the actual_length from the preferred part to the other part
+    """
+
+    assert diagnosis[0] == "Measure_Length"
+    assert len(diagnosis) == 3
+    assert isinstance(diagnosis[1], int)
+    assert isinstance(diagnosis[2], float)
+
+    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+    measure.duration.quarterLength = diagnosis[2]
 
 
 def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
     """
     Impose a standard for numbering measure.
-    TODO Initial implementation for either of the following:
 
     1 = "Measure Count"
     Simple natural number count for each measure, regardless of length.
@@ -211,24 +298,25 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
     preemptively to attempt to enforce identical numbering in the first place
     (before even extracting the measure maps).
     """
+
     measure_list = part_to_fix.getElementsByClass(stream.Measure)
     if standard == "Full Measure":
         count = 0
-        if measure_list[0].duration.quarterLength == measure_list[0].barDuration.quarterLength:
-            count += 1
-        measure_list[0].number = count
-        for index in range(len(measure_list) - 2):
-            measure = measure_list[index + 1]
-            if measure.quarterLength + measure_list[index + 2].quarterLength == measure.barDuration.quarterLength:
+        for index in range(len(measure_list) - 1):
+            measure = measure_list[index]
+            if measure.quarterLength + measure_list[index + 1].quarterLength == measure.barDuration.quarterLength:
                 count += 1
                 measure.number = count
                 measure.numberSuffix = 'a'
-            elif measure.quarterLength + measure_list[index].quarterLength == measure_list[index].barDuration.quarterLength:
-                measure_list[index + 1].number = count
-                measure_list[index + 1].numberSuffix = 'b'
+            elif measure.quarterLength + measure_list[index - 1].quarterLength == measure_list[index - 1].barDuration.quarterLength and index != 0:
+                measure_list[index].number = count
+                measure_list[index].numberSuffix = 'b'
+            elif measure_list[index].duration.quarterLength != measure_list[index].barDuration and index == 0:
+                measure_list[0].number = count
             else:
                 count += 1
                 measure.number = count
+            # print(measure)
     elif standard == "Measure Count":
         count = 1
         for measure in measure_list:
@@ -236,8 +324,6 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
             count += 1
     else:
         raise ValueError
-
-    # TODO
 
 
 # ------------------------------------------------------------------------------
@@ -247,6 +333,7 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
     """
     Writes a measure map to a tsv or csv file.
     """
+
     dictionary_keys = ["measure_count",
                        "offset",
                        "measure_number",
@@ -297,10 +384,60 @@ def write_measure_map(measure_map: list, path: str = None, field_names: list = N
     else:
         raise ValueError(f"Unsupported file format '{outformat}' given")
 
+
+# ------------------------------------------------------------------------------
+
+def removeDuplicates(thisStream: stream.Stream,
+                     classesToRemove: tuple = (meter.TimeSignature, key.KeySignature, clef.Clef),
+                     inPlace: bool = True
+                     ) -> stream.Stream:
+    """
+    Duplicate of music21's removeDuplicates function, included here until it is available via stable release
+    TODO: remove
+    """
+
+    from music21.base import Music21Object
+
+    supportedClasses = (meter.TimeSignature, key.KeySignature, clef.Clef)
+
+    removalDict: dict[stream.Stream, list[Music21Object]] = {}
+
+    if not inPlace:
+        thisStream = thisStream.coreCopyAsDerivation('removeDuplicates')
+
+    if isinstance(thisStream, stream.Score):
+        if len(thisStream.parts) > 0:
+            for p in thisStream.parts:
+                removeDuplicates(p, classesToRemove=classesToRemove, inPlace=True)
+
+    for thisClass in classesToRemove:
+
+        if not any(issubclass(thisClass, supportedClass) for supportedClass in supportedClasses):
+            raise ValueError(f'Invalid class. Only {supportedClasses} are supported.')
+
+        allStates = thisStream.recurse().getElementsByClass(thisClass)
+
+        if len(allStates) < 2:  # Not used, or doesn't change
+            continue
+
+        currentState = allStates[0]  # First to initialize: can't be a duplicate
+        for thisState in allStates[1:]:
+            if thisState == currentState:
+                if thisState.activeSite in removalDict:  # May be several in same (e.g., measure)
+                    removalDict[thisState.activeSite].append(thisState)
+                else:
+                    removalDict[thisState.activeSite] = [thisState]
+            else:
+                currentState = thisState
+
+    for activeSiteKey, valuesToRemove in removalDict.items():
+        activeSiteKey.remove(valuesToRemove, recurse=True)
+
+    return thisStream
+
 # ------------------------------------------------------------------------------
 
 
 # generate_examples()
 # generate_examples("../Example_core/")
-
 

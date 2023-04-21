@@ -23,20 +23,20 @@ More to follow ;)
 
 # ------------------------------------------------------------------------------
 
-from Code.music21_application import stream_to_measure_map
+import Code.music21_application
 
 
 # ------------------------------------------------------------------------------
 
 
 class Compare:
-    def __init__(self, preferred, other):
+    def __init__(self, preferred, other, attempt_fix: bool = False):
         self.preferred_measure_map = preferred
         self.other_measure_map = other
-        self.other_renumbered = None
         self.expanded_flag = False
-
+        self.renumbered_flag = False
         self.output_flag = False
+        self.attempt_fix = attempt_fix
 
         self.preferred_length = len(self.preferred_measure_map)
         self.other_length = len(self.other_measure_map)
@@ -45,7 +45,7 @@ class Compare:
         self.attempted_changes = []
         self.diagnose()
 
-    def diagnose(self, attempt_fix: bool = False):
+    def diagnose(self):
         """
         Attempt to diagnose the differences between two measure maps and
         optionally attempt to align them (if argument "fix" is True).
@@ -81,27 +81,28 @@ class Compare:
                 elif change[0] == "Expand_Repeats":
                     print(" - Expand the repeats.")  # Update for which measure map needs expanding?
                 elif change[0] == "Renumber":
-                    print(" - Renumber the measures in the 2nd.")
+                    print(" - Renumber the measures in the 2nd source.")
                 elif change[0] == "Repeat_Marks":
                     print(f" - Add {change[2]} repeat marks to measure {change[1]}.")
                 elif change[0] == "Measure_Length":
                     print(f" - Change measure {change[1]}'s actual length to {change[2]}.")
-                elif change[0] == "Add":
-                    print()
-                elif change[0] == "Remove":
-                    print()
-                else:
-                    print()
+                """elif change[0] == "Add":
+                elif change[0] == "Remove":"""
+
             print()
             self.output_flag = True
-            return self.other_measure_map
+            if self.attempt_fix:
+                return self.diagnosis
+            else:
+                return self.other_measure_map
 
         if self.preferred_length != self.other_length:
             self.compare_lengths()
             for change in self.diagnosis:
                 if change not in self.attempted_changes:
                     if change[0] == "Join":
-                        self.perform_join(change)
+                        self.other_measure_map = perform_join(self.other_measure_map, change)
+                        self.other_length = len(self.other_measure_map)
                         self.attempted_changes.append(change)
                     elif change[0] == "Split":
                         self.other_measure_map = perform_split(self.other_measure_map, change)
@@ -109,7 +110,7 @@ class Compare:
                         self.attempted_changes.append(change)
             self.diagnose()
             if self.preferred_length != self.other_length:
-                """if self.expanded_flag:  # not self.expanded_flag:
+                if not self.expanded_flag:
                     self.preferred_measure_map = perform_expand_repeats(self.preferred_measure_map)
                     self.preferred_length = len(self.preferred_measure_map)
                     self.other_measure_map = perform_expand_repeats(self.other_measure_map)
@@ -118,11 +119,15 @@ class Compare:
                     self.diagnosis.append(("Expand_Repeats", "Both"))
                     self.diagnose()
                 else:
-                    # needleman_wunsch"""
+                    pass
+                    needleman_wunsch(self.preferred_measure_map, self.other_measure_map)  # TODO: worst case scenario? Is this too redundant now?
 
         elif mismatch_measure_number:
-            if not self.other_renumbered:
-                self.try_renumber()
+            if not self.renumbered_flag:
+                self.other_measure_map = try_renumber(self.other_measure_map, self.preferred_measure_map)
+                self.other_length = len(self.other_measure_map)
+                self.diagnosis.append(("Renumber", "all"))
+                self.renumbered_flag = True
                 self.diagnose()
 
         elif mismatch_repeats:
@@ -145,28 +150,6 @@ class Compare:
 
         return self.other_measure_map
 
-    def perform_join(self, change):
-        self.other_measure_map[change[1]]['actual_length'] = self.preferred_measure_map[change[1]]['actual_length']
-        for next_measure in self.other_measure_map[change[1]]['next_measure']:
-            if next_measure > change[1]:
-                next_measure -= 1
-        del self.other_measure_map[change[1] + 1]
-        for measure in self.other_measure_map:
-            if measure['measure_number'] > change[1]:
-                measure['measure_count'] -= 1
-                measure['measure_number'] -= 1
-                for next_measure in measure['next_measure']:
-                    if next_measure > change[1]:
-                        next_measure -= 1
-
-    def try_renumber(self):
-        self.other_renumbered = self.other_measure_map
-        for measure in self.preferred_measure_map:
-            measure['measure_number'] = self.other_measure_map[measure['measure_count'] - 1]['measure_number']
-        self.diagnosis.append(("Renumber", "all"))
-        self.other_measure_map = self.other_renumbered
-        self.other_length = len(self.other_renumbered)
-
     def compare_lengths(self):
         i = 0
 
@@ -185,6 +168,7 @@ def perform_split(other, change):
     """
     Performs split on measure change[1] at offset change[2] on other measure map.
     """
+
     other.insert(change[1], other[change[1] - 1].copy())  # is change[1] the measure_number or measure_count or index of measure in list?
     other[change[1]]['offset'] += change[2]
     other[change[1] - 1]['actual_length'] = float(change[2])
@@ -197,14 +181,49 @@ def perform_split(other, change):
 
     for i in range(change[1], len(other)):
         other[i]['measure_count'] += 1
-        # other[i]['measure_number'] += 1
-        other[i]['next_measure'] = [value + 1 for value in other[i]['next_measure']]
+        for j in range(len(other[i]['next_measure'])):
+            if other[i]['next_measure'][j] > other[change[1] - 1]['measure_count']:
+                other[i]['next_measure'][j] += 1
 
     return other
 
 
+def perform_join(other, change):
+    """
+    Performs join on measure change[1] and change[1] + 1 to form one measure on other measure map.
+    """
+
+    other[change[1] - 1]['actual_length'] = other[change[1] - 1]['actual_length'] + other[change[1]]['actual_length']
+    other[change[1] - 1]['has_end_repeat'] = other[change[1]]['has_end_repeat']
+    other.pop(change[1])
+
+    for i in range(change[1], len(other)):
+        other[i]['measure_count'] -= 1
+        other[i]['measure_number'] -= 1  # TODO: Will the joining measures have same or different measure number? i.e. do latter measures need to change their measure number
+        for j in range(len(other[i]['next_measure'])):
+            if other[i]['next_measure'][j] > other[change[1] - 1]['measure_count']:
+                other[i]['next_measure'][j] -= 1
+
+    return other
+
+
+def try_renumber(preferred, other):
+    """
+    Renumbers measures in other measure map to match the numbering in the preferred measure map
+    """
+
+    for measure in preferred:
+        other[measure['measure_count'] - 1]['measure_number'] = measure['measure_number']
+    return other
+
+
 def perform_repeat_copy(preferred, other):
+    """
+    Copy the repeat markings from the preferred measure map to the other measure map
+    """
+
     assert len(preferred) == len(other)
+
     for i in range(len(preferred)):
         other[i]['has_start_repeat'] = preferred[i]['has_start_repeat']
         other[i]['has_end_repeat'] = preferred[i]['has_end_repeat']
@@ -213,6 +232,10 @@ def perform_repeat_copy(preferred, other):
 
 
 def perform_length_copy(preferred, other):
+    """
+    Copy the actual_length from the preferred measure map to the other measure map
+    """
+
     assert len(preferred) == len(other)
     for i in range(len(preferred)):
         other[i]['actual_length'] = preferred[i]['actual_length']
@@ -220,24 +243,46 @@ def perform_length_copy(preferred, other):
 
 
 def perform_expand_repeats(measure_map):
-    for measure in measure_map:
-        if measure['has_start_repeat'] is True:
-            start_measure = measure['measure_count']
-        for next_measure in measure['next_measure']:
-            if next_measure > measure:
-                return
-    return measure_map
+    """
+    Expand all the repeats in other measure map
+    """
+
+    measure_order = [1]
+    i = 0
+    while i < len(measure_map) - 1:
+        if not measure_map[i]['next_measure']:
+            measure_map[i]['next_measure'].append(measure_map[i]['measure_count'] + 1)
+        next_measure = measure_map[i]['next_measure'].pop(0)
+        measure_order.append(next_measure)
+        i = next_measure - 1
+
+    expanded_measure_map = []
+    count = 1
+    for measure_count in measure_order:
+        expanded_measure_map.append(measure_map[measure_count - 1].copy())
+        expanded_measure_map[count - 1]['measure_count'] = count
+        expanded_measure_map[count - 1]['next_measure'] = [count + 1]
+        expanded_measure_map[count - 1]['has_start_repeat'] = False
+        expanded_measure_map[count - 1]['has_end_repeat'] = False
+        count += 1
+
+    return expanded_measure_map
 
 # ------------------------------------------------------------------------------
 
 
 def needleman_wunsch(preferred_measure_map, other_measure_map):
+    """
+    Alignment algorithm to align measures in the other measure map to measures in the preferred measure map
+    # TODO: make output easier to interpret for end user?
+    """
+
     n = len(preferred_measure_map)
     m = len(other_measure_map)
     match_score = 1
     mismatch_score = -1
-    gap_penalty = -2  # prioritise one larger gap rather than lots of smaller gaps?
-    continue_gap_penalty = -1
+    gap_penalty = -2
+    continue_gap_penalty = -1  # TODO: update needleman_wunsch to prioritise continuing gaps over opening new gaps
 
     dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
     for i in range(1, n + 1):

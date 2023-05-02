@@ -219,17 +219,37 @@ def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     removeDuplicates(part_to_fix)  # stream.tools.removeDuplicates(part_to_fix)
 
 
-def join_measure(part_to_fix: stream.Part, diagnosis: tuple):
+def join_measures(
+        part_to_fix: stream.Part,
+        diagnosis: tuple
+) -> stream.Part:
     """
-    Join two measures into one measure on a part defined by the tuple in the form ("Join", measure_count)
+    Join two measures into one on a part (`part_to_fix`)
+    defined by the `diagnosis` tuple in the form ("Join", measure_count)
+    where the `measure_count` is the index of the first measure to be joined to the one that
+    immediately follows.
+
+    Note: it bears repeating that this is
+    enforced for consecutive measures only and that
+    the indexing is based on `measure_count`, i.e., not number.
+    This behaviour may change, e.g., to admit an option for specifying measure by number.
     """
 
     assert diagnosis[0] == "Join"
     assert len(diagnosis) == 2
     assert isinstance(diagnosis[1], int)
 
-    # TODO: implement join_measure
-    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+    measures = part_to_fix.getElementsByClass(stream.Measure)
+    target_measure = measures[diagnosis[1] - 1]
+    source_measure = measures[diagnosis[1]]  # NB enforced consecutive
+    base_ql = target_measure.quarterLength
+
+    for x in source_measure:
+        target_measure.insert(base_ql + x.offset, x)
+
+    part_to_fix.remove(source_measure)
+
+    return part_to_fix
 
 
 def expand_repeats(part_to_fix: stream.Stream):
@@ -238,12 +258,12 @@ def expand_repeats(part_to_fix: stream.Stream):
     """
 
     expanded_part = part_to_fix.expandRepeats()
-    # expanded_part.show()
-    for measure in expanded_part.parts[0].getElementsByClass(stream.Measure):
+    measures = expanded_part.getElementsByClass(stream.Measure)
+    for measure in measures:
         if measure.measureNumber > 0:
             measure.leftBarline = None
             measure.rightBarline = None
-    expanded_part.parts[0].getElementsByClass(stream.Measure)[-1].rightBarline = bar.Barline(type = 'final')
+    measure[-1].rightBarline = bar.Barline(type='final')
     # TODO: music21 keeps repeat Clef and TimeSig
     removeDuplicates(expanded_part)  # stream.tools.removeDuplicates(expanded_part)
     # expanded_part.show()

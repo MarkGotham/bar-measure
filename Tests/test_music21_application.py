@@ -51,10 +51,9 @@ class Test(TestCase):
 
     def test_join_measure(self):
         s = converter.parse(EG_CORE / 'core.mxl').parts[0]
-        fake_diagnosis = ("Join", 1)
         self.assertEqual(10, len(s.getElementsByClass(stream.Measure)))
-        new = join_measures(s, fake_diagnosis)
-        self.assertEqual(9, len(new.getElementsByClass(stream.Measure)))
+        join_measures(s, ("Join", 1))
+        self.assertEqual(9, len(s.getElementsByClass(stream.Measure)))
 
     def test_numbering_standards(self):
         s = converter.parse(EG_CORE / 'core.mxl').parts[0]
@@ -87,7 +86,7 @@ class Test(TestCase):
         score = REPO_FOLDER / 'Real_Cases' / 'Marias_Kirchgang' / 'score.mxl'
         analysis = REPO_FOLDER / 'Real_Cases' / 'Marias_Kirchgang' / 'analysis.txt'
 
-        converter.parse(score).show()
-        converter.parse(analysis, format='Romantext').show()
+        # converter.parse(score).show()
+        # converter.parse(analysis, format='Romantext').show()
 
         Aligner(score, analysis, attempt_fix=True, write_modifications=True)

@@ -61,9 +61,7 @@ class Aligner:
         if attempt_fix:
             for change in this_compare_object.diagnosis:  # TODO: Iterate through parts?
                 if change[0] == "Join":
-                    pass
                     join_measures(self.other.parts[0], change)
-                    # TODO: implement join_measure
                 elif change[0] == "Split":
                     split_measure(self.other.parts[0], change)
                 elif change[0] == "Expand_Repeats":
@@ -98,7 +96,7 @@ class Aligner:
                         file.write(f" - Change measure {change[1]}'s actual length to {change[2]}.\n")
 
         # removeDuplicates(self.other)
-        self.other.show()
+        # self.other.show()
 
 def generate_examples(path_to_examples: str = '../Examples/'):
     """

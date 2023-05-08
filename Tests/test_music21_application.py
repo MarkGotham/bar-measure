@@ -3,13 +3,14 @@ Test the application to music21.
 """
 
 from unittest import TestCase
+from . import EG_CORE, EG_FOLDER, REPO_FOLDER
 from Code.music21_application import *
 
 
 class Test(TestCase):
 
     def test_example_case(self):
-        measure_map = stream_to_measure_map(converter.parse('../Example_core/core.mxl'))
+        measure_map = stream_to_measure_map(converter.parse(EG_CORE / 'core.mxl'))
 
         self.assertEqual([{'measure_count': 1, 'offset': 0.0, 'measure_number': 0, 'nominal_length': 4.0,
                            'actual_length': 1.0, 'time_signature': '4/4', 'has_start_repeat': False,
@@ -49,14 +50,14 @@ class Test(TestCase):
         self.assertEqual(12, len(s))
 
     def test_join_measure(self):
-        s = converter.parse("../Examples/expanded_repeats.mxl").parts[0]
-        self.assertEqual(16, len(s))
-        # join_measure(s, ("Join", 2))
-        # self.assertEqual(15, len(s))
-        # TODO: implement join_measure
+        s = converter.parse(EG_CORE / 'core.mxl').parts[0]
+        fake_diagnosis = ("Join", 1)
+        self.assertEqual(10, len(s.getElementsByClass(stream.Measure)))
+        new = join_measures(s, fake_diagnosis)
+        self.assertEqual(9, len(new.getElementsByClass(stream.Measure)))
 
     def test_numbering_standards(self):
-        s = converter.parse("../Example_core/core.mxl").parts[0]
+        s = converter.parse(EG_CORE / 'core.mxl').parts[0]
         self.assertEqual(0, s.getElementsByClass(stream.Measure)[0].measureNumber)
         impose_numbering_standard(s, "Measure Count")
         self.assertEqual(1, s.getElementsByClass(stream.Measure)[0].measureNumber)
@@ -65,19 +66,19 @@ class Test(TestCase):
         self.assertEqual(2, s.getElementsByClass(stream.Measure)[3].measureNumber)
 
     def test_copy_repeats(self):
-        s = converter.parse("../Examples/no_repeats.mxl").parts[0]
+        s = converter.parse(EG_FOLDER / "no_repeats.mxl").parts[0]
         copy_repeat_marks(s, ("Repeat_Marks", 3, "end"))
         copy_repeat_marks(s, ("Repeat_Marks", 4, "start"))
         copy_repeat_marks(s, ("Repeat_Marks", 7, "end"))
 
     def test_copy_length(self):
-        s = converter.parse("../Example_core/core.mxl").parts[0]
+        s = converter.parse(EG_CORE / 'core.mxl').parts[0]
         self.assertEqual(3.0, s.getElementsByClass("Measure")[2].duration.quarterLength)
         copy_length(s, ("Measure_Length", 3, 4.0))
         self.assertEqual(4.0, s.getElementsByClass("Measure")[2].duration.quarterLength)
 
     def test_expand_repeats(self):
-        s = converter.parse("../Example_core/core.mxl")
+        s = converter.parse(EG_CORE / 'core.mxl').parts[0]
         expand_repeats(s)
         # TODO: fix
         # self.assertEqual(part_to_measure_map(converter.parse("../Examples/expanded_repeats.mxl").parts[0]), part_to_measure_map(s))

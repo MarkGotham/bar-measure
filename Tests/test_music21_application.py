@@ -86,4 +86,7 @@ class Test(TestCase):
         score = REPO_FOLDER / 'Real_Cases' / 'Marias_Kirchgang' / 'score.mxl'
         analysis = REPO_FOLDER / 'Real_Cases' / 'Marias_Kirchgang' / 'analysis.txt'
 
-        Aligner(score, analysis, attempt_fix=True)
+        converter.parse(score).show()
+        converter.parse(analysis, format='Romantext').show()
+
+        Aligner(score, analysis, attempt_fix=True, write_modifications=True)

@@ -21,10 +21,8 @@ More to follow ;)
 
 """
 
+
 # ------------------------------------------------------------------------------
-
-import Code.music21_application
-
 
 # ------------------------------------------------------------------------------
 
@@ -35,7 +33,6 @@ class Compare:
         self.other_measure_map = other
         self.expanded_flag = False
         self.renumbered_flag = False
-        self.output_flag = False
         self.attempt_fix = attempt_fix
 
         self.preferred_length = len(self.preferred_measure_map)
@@ -69,28 +66,7 @@ class Compare:
                 mismatch_lengths = True
 
         if not mismatch_offsets and not mismatch_measure_number and not mismatch_time_signature and not \
-                mismatch_repeats and not mismatch_lengths and self.preferred_length == self.other_length and \
-                not self.output_flag:
-            print()
-            print("Changes to be made to secondary measure map:")
-            for change in self.diagnosis:
-                if change[0] == "Join":
-                    print(f" - Join measures {change[1]} and {change[1] + 1}.")
-                elif change[0] == "Split":
-                    print(f" - Split measure {change[1]} at offset {change[2]}.")
-                elif change[0] == "Expand_Repeats":
-                    print(" - Expand the repeats.")  # Update for which measure map needs expanding?
-                elif change[0] == "Renumber":
-                    print(" - Renumber the measures in the 2nd source.")
-                elif change[0] == "Repeat_Marks":
-                    print(f" - Add {change[2]} repeat marks to measure {change[1]}.")
-                elif change[0] == "Measure_Length":
-                    print(f" - Change measure {change[1]}'s actual length to {change[2]}.")
-                """elif change[0] == "Add":
-                elif change[0] == "Remove":"""
-
-            print()
-            self.output_flag = True
+                mismatch_repeats and not mismatch_lengths and self.preferred_length == self.other_length:
             if self.attempt_fix:
                 return self.diagnosis
             else:
@@ -120,7 +96,22 @@ class Compare:
                     self.diagnose()
                 else:
                     pass
-                    needleman_wunsch(self.preferred_measure_map, self.other_measure_map)  # TODO: worst case scenario? Is this too redundant now?
+                    preferred_aligned, other_aligned = needleman_wunsch(self.preferred_measure_map,
+                                                                        self.other_measure_map)
+                    print("Could not align the two sources. Best alignment based on Needleman-Wunsch algorithm:")
+                    print(f"Preferred measure map aligned: ${preferred_aligned}")
+                    print(f"Other measure map aligned: ${other_aligned}")
+                    return preferred_aligned, other_aligned
+                    # TODO: worst case scenario? Is this too redundant now?
+
+        elif mismatch_repeats:  # Above mismatch_measure_number because otherwise it doesn't work???
+            for i in range(self.preferred_length):
+                if self.preferred_measure_map[i]['has_start_repeat'] != self.other_measure_map[i]['has_start_repeat']:
+                    self.diagnosis.append(('Repeat_Marks', self.preferred_measure_map[i]['measure_count'], 'start'))
+                if self.preferred_measure_map[i]['has_end_repeat'] != self.other_measure_map[i]['has_end_repeat']:
+                    self.diagnosis.append(('Repeat_Marks', self.preferred_measure_map[i]['measure_count'], 'end'))
+            perform_repeat_copy(self.preferred_measure_map, self.other_measure_map)
+            self.diagnose()
 
         elif mismatch_measure_number:
             if not self.renumbered_flag:
@@ -129,15 +120,6 @@ class Compare:
                 self.diagnosis.append(("Renumber", "all"))
                 self.renumbered_flag = True
                 self.diagnose()
-
-        elif mismatch_repeats:
-            for i in range(self.preferred_length):
-                if self.preferred_measure_map[i]['has_start_repeat'] != self.other_measure_map[i]['has_start_repeat']:
-                    self.diagnosis.append(('Repeat_Marks', self.preferred_measure_map[i]['measure_count'], 'start'))
-                if self.preferred_measure_map[i]['has_end_repeat'] != self.other_measure_map[i]['has_end_repeat']:
-                    self.diagnosis.append(('Repeat_Marks', self.preferred_measure_map[i]['measure_count'], 'end'))
-            perform_repeat_copy(self.preferred_measure_map, self.other_measure_map)
-            self.diagnose()
 
         elif mismatch_lengths:
             for i in range(self.preferred_length):
@@ -154,12 +136,15 @@ class Compare:
         i = 0
 
         while i < self.preferred_length - 1 and i < self.other_length - 1:
-            if self.preferred_measure_map[i]['actual_length'] == self.other_measure_map[i]['actual_length'] + self.other_measure_map[i + 1]['actual_length']:
+            if self.preferred_measure_map[i]['actual_length'] == self.other_measure_map[i]['actual_length'] + \
+                    self.other_measure_map[i + 1]['actual_length']:
                 self.diagnosis.append(("Join", i + 1))
-            if self.preferred_measure_map[i]['actual_length'] + self.preferred_measure_map[i + 1]['actual_length'] == self.other_measure_map[i]['actual_length']:
+            if self.preferred_measure_map[i]['actual_length'] + self.preferred_measure_map[i + 1]['actual_length'] == \
+                    self.other_measure_map[i]['actual_length']:
                 self.diagnosis.append(("Split", i + 1, self.preferred_measure_map[i]['actual_length']))
 
             i += 1
+
 
 # ------------------------------------------------------------------------------
 
@@ -169,7 +154,8 @@ def perform_split(other, change):
     Performs split on measure change[1] at offset change[2] on other measure map.
     """
 
-    other.insert(change[1], other[change[1] - 1].copy())  # is change[1] the measure_number or measure_count or index of measure in list?
+    other.insert(change[1], other[
+        change[1] - 1].copy())  # is change[1] the measure_number or measure_count or index of measure in list?
     other[change[1]]['offset'] += change[2]
     other[change[1] - 1]['actual_length'] = float(change[2])
     other[change[1]]['actual_length'] -= change[2]
@@ -199,7 +185,7 @@ def perform_join(other, change):
 
     for i in range(change[1], len(other)):
         other[i]['measure_count'] -= 1
-        other[i]['measure_number'] -= 1  # TODO: Will the joining measures have same or different measure number? i.e. do latter measures need to change their measure number
+        other[i]['measure_number'] -= 1
         for j in range(len(other[i]['next_measure'])):
             if other[i]['next_measure'][j] > other[change[1] - 1]['measure_count']:
                 other[i]['next_measure'][j] -= 1
@@ -237,6 +223,7 @@ def perform_length_copy(preferred, other):
     """
 
     assert len(preferred) == len(other)
+
     for i in range(len(preferred)):
         other[i]['actual_length'] = preferred[i]['actual_length']
     return other
@@ -268,6 +255,7 @@ def perform_expand_repeats(measure_map):
 
     return expanded_measure_map
 
+
 # ------------------------------------------------------------------------------
 
 
@@ -284,27 +272,27 @@ def needleman_wunsch(preferred_measure_map, other_measure_map):
     gap_penalty = -2
     continue_gap_penalty = -1  # TODO: update needleman_wunsch to prioritise continuing gaps over opening new gaps
 
-    dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
+    matrix = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
     for i in range(1, n + 1):
-        dp[i][0] = dp[i - 1][0] + gap_penalty
+        matrix[i][0] = matrix[i - 1][0] + gap_penalty
     for j in range(1, m + 1):
-        dp[0][j] = dp[0][j - 1] + gap_penalty
+        matrix[0][j] = matrix[0][j - 1] + gap_penalty
 
     for i in range(1, n + 1):
         for j in range(1, m + 1):
-            match = dp[i - 1][j - 1] + (
-                match_score if preferred_measure_map[i - 1] == other_measure_map[j - 1] else mismatch_score)
-            delete = dp[i - 1][j] + gap_penalty
-            insert = dp[i][j - 1] + gap_penalty
-            dp[i][j] = max(match, delete, insert)
+            match = matrix[i - 1][j - 1] + (match_score if preferred_measure_map[i - 1] == other_measure_map[j - 1]
+                                            else mismatch_score)
+            delete = matrix[i - 1][j] + gap_penalty
+            insert = matrix[i][j - 1] + gap_penalty
+            matrix[i][j] = max(match, delete, insert)
 
     preferred_aligned, other_aligned = [], []
     i, j = n, m
     while i > 0 and j > 0:
-        score = dp[i][j]
-        diag = dp[i - 1][j - 1]
-        up = dp[i][j - 1]
-        left = dp[i - 1][j]
+        score = matrix[i][j]
+        diag = matrix[i - 1][j - 1]
+        up = matrix[i][j - 1]
+        left = matrix[i - 1][j]
         if score == left + gap_penalty:
             preferred_aligned.append(preferred_measure_map[i - 1])
             other_aligned.append(None)

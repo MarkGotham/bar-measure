@@ -32,7 +32,7 @@ REPO_FOLDER = Path(__file__).parent.parent
 # ------------------------------------------------------------------------------
 
 class Aligner:
-    def __init__(self, path_to_preferred: Path, path_to_other: Path, write: bool = True, outpath: str = None, attempt_fix: bool = False):
+    def __init__(self, path_to_preferred: Path, path_to_other: Path, write: bool = True, outpath: str = None, attempt_fix: bool = False, write_modifications: bool = False, check_parts_match: bool = True):
         # Paths
         self.path_to_preferred = path_to_preferred
         self.path_to_other = path_to_other
@@ -45,8 +45,8 @@ class Aligner:
             self.other = converter.parse(self.path_to_other)
 
         # MM
-        self.preferred_measure_map = stream_to_measure_map(self.preferred)
-        self.other_measure_map = stream_to_measure_map(self.other)
+        self.preferred_measure_map = stream_to_measure_map(self.preferred, check_parts_match)
+        self.other_measure_map = stream_to_measure_map(self.other, check_parts_match)
 
         if write:
             if outpath is None:
@@ -56,12 +56,13 @@ class Aligner:
             write_measure_map(self.preferred_measure_map, path=preferred_outpath)
             write_measure_map(self.other_measure_map, path=other_outpath)
 
+        this_compare_object = Code.measuring_bars.Compare(self.preferred_measure_map, self.other_measure_map, attempt_fix=True)
+
         if attempt_fix:
-            this_compare_object = Code.measuring_bars.Compare(self.preferred_measure_map, self.other_measure_map, attempt_fix=True)
             for change in this_compare_object.diagnosis:  # TODO: Iterate through parts?
                 if change[0] == "Join":
                     pass
-                    join_measure(self.other.parts[0], change)
+                    join_measures(self.other.parts[0], change)
                     # TODO: implement join_measure
                 elif change[0] == "Split":
                     split_measure(self.other.parts[0], change)
@@ -79,6 +80,25 @@ class Aligner:
             # self.other.parts[0].show('text')
             # self.preferred.parts[0].show('text')
 
+        if write_modifications:
+            with open(path_to_other.parent / 'other_modifications.txt', "w") as file:
+                file.write("Changes to be made to secondary measure map:\n")
+                for change in this_compare_object.diagnosis:
+                    if change[0] == "Join":
+                        file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
+                    elif change[0] == "Split":
+                        file.write(f" - Split measure {change[1]} at offset {change[2]}.\n")
+                    elif change[0] == "Expand_Repeats":
+                        file.write(" - Expand the repeats.\n")
+                    elif change[0] == "Renumber":
+                        file.write(" - Renumber the measures.\n")
+                    elif change[0] == "Repeat_Marks":
+                        file.write(f" - Add {change[2]} repeat marks to measure {change[1]}.\n")
+                    elif change[0] == "Measure_Length":
+                        file.write(f" - Change measure {change[1]}'s actual length to {change[2]}.\n")
+
+        # removeDuplicates(self.other)
+        self.other.show()
 
 def generate_examples(path_to_examples: str = '../Examples/'):
     """
@@ -219,7 +239,7 @@ def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     removeDuplicates(part_to_fix)  # stream.tools.removeDuplicates(part_to_fix)
 
 
-def join_measure(part_to_fix: stream.Part, diagnosis: tuple):
+def join_measures(part_to_fix: stream.Part, diagnosis: tuple):
     """
     Join two measures into one measure on a part defined by the tuple in the form ("Join", measure_count)
     """
@@ -243,7 +263,7 @@ def expand_repeats(part_to_fix: stream.Stream):
         if measure.measureNumber > 0:
             measure.leftBarline = None
             measure.rightBarline = None
-    expanded_part.parts[0].getElementsByClass(stream.Measure)[-1].rightBarline = bar.Barline(type = 'final')
+    expanded_part.parts[0].getElementsByClass(stream.Measure)[-1].rightBarline = bar.Barline(type='final')
     # TODO: music21 keeps repeat Clef and TimeSig
     removeDuplicates(expanded_part)  # stream.tools.removeDuplicates(expanded_part)
     # expanded_part.show()
@@ -317,6 +337,8 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
                 count += 1
                 measure.number = count
             # print(measure)
+        count += 1
+        measure_list[-1].number = count
     elif standard == "Measure Count":
         count = 1
         for measure in measure_list:
@@ -324,6 +346,8 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
             count += 1
     else:
         raise ValueError
+
+    return part_to_fix
 
 
 # ------------------------------------------------------------------------------

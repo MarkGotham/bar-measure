@@ -363,8 +363,125 @@ class Test(TestCase):
         ]
 
         self.assertNotEqual(preferred_measure_map, other_measure_map)
-        output = perform_length_copy(preferred_measure_map, other_measure_map)
+        output = perform_actual_length_copy(preferred_measure_map, other_measure_map)
         self.assertEqual(preferred_measure_map, output)
+
+    def test_time_signature(self):
+        preferred_measure_map = [{
+            "measure_count": 1,
+            "offset": 0.0,
+            "measure_number": 1,
+            "nominal_length": 4.0,
+            "actual_length": 3.0,
+            "time_signature": "3/4",
+            "has_start_repeat": False,
+            "has_end_repeat": False,
+            "next_measure": [2]}]
+        other_measure_map = [{
+            "measure_count": 1,
+            "offset": 0.0,
+            "measure_number": 1,
+            "nominal_length": 4.0,
+            "actual_length": 3.0,
+            "time_signature": "4/4",
+            "has_start_repeat": False,
+            "has_end_repeat": False,
+            "next_measure": [2]}]
+        self.assertNotEqual(preferred_measure_map, other_measure_map)
+        output = perform_time_signature_copy(preferred_measure_map, other_measure_map)
+        self.assertEqual(preferred_measure_map, output)
+
+    def test_nominal_lengths(self):
+        measure_map = [{
+            "measure_count": 1,
+            "offset": 0.0,
+            "measure_number": 1,
+            "nominal_length": 4.0,
+            "actual_length": 3.0,
+            "time_signature": "3/4",
+            "has_start_repeat": False,
+            "has_end_repeat": False,
+            "next_measure": [2]}]
+        resulting_measure_map = [{
+            "measure_count": 1,
+            "offset": 0.0,
+            "measure_number": 1,
+            "nominal_length": 3.0,
+            "actual_length": 3.0,
+            "time_signature": "3/4",
+            "has_start_repeat": False,
+            "has_end_repeat": False,
+            "next_measure": [2]}]
+        self.assertNotEqual(measure_map, resulting_measure_map)
+        output = perform_nominal_length_recalculation(measure_map)
+        self.assertEqual(resulting_measure_map, output)
+
+    def test_offset(self):
+        measure_map = [{
+                "measure_count": 1,
+                "offset": 3.0,
+                "measure_number": 0,
+                "nominal_length": 4.0,
+                "actual_length": 1.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [2]},
+            {
+                "measure_count": 2,
+                "offset": 34.0,
+                "measure_number": 1,
+                "nominal_length": 4.0,
+                "actual_length": 3.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [3]},
+            {
+                "measure_count": 3,
+                "offset": 54.0,
+                "measure_number": 2,
+                "nominal_length": 4.0,
+                "actual_length": 4.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [4]}
+        ]
+        resulting_measure_map = [{
+                "measure_count": 1,
+                "offset": 0.0,
+                "measure_number": 0,
+                "nominal_length": 4.0,
+                "actual_length": 1.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [2]},
+            {
+                "measure_count": 2,
+                "offset": 1.0,
+                "measure_number": 1,
+                "nominal_length": 4.0,
+                "actual_length": 3.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [3]},
+            {
+                "measure_count": 3,
+                "offset": 4.0,
+                "measure_number": 2,
+                "nominal_length": 4.0,
+                "actual_length": 4.0,
+                "time_signature": "4/4",
+                "has_start_repeat": False,
+                "has_end_repeat": False,
+                "next_measure": [4]}
+        ]
+        self.assertNotEqual(measure_map, resulting_measure_map)
+        output = perform_offset_recalculation(measure_map)
+        self.assertEqual(resulting_measure_map, output)
 
     def test_real_cases(self):
         """score = REPO_FOLDER / 'Real_Cases' / 'Marias_Kirchgang' / 'score.mxl'

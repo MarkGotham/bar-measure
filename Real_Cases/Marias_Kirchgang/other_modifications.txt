@@ -5,4 +5,4 @@ Changes to be made to secondary measure map:
  - Add end repeat marks to measure 5.
  - Add start repeat marks to measure 6.
  - Add end repeat marks to measure 10.
- - Change measure 25's actual length to 3.0.
+ - Change measure 26's actual length to 3.0.

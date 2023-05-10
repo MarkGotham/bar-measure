@@ -76,6 +76,12 @@ class Test(TestCase):
         copy_length(s, ("Measure_Length", 3, 4.0))
         self.assertEqual(4.0, s.getElementsByClass("Measure")[2].duration.quarterLength)
 
+    def test_copy_time_signature(self):
+        s = converter.parse(EG_CORE / 'core.mxl').parts[0]
+        self.assertEqual("4/4", s.getElementsByClass("Measure")[0].timeSignature.ratioString)
+        copy_time_signature(s, ("Time_Signature", 1, "3/4"))
+        self.assertEqual("3/4", s.getElementsByClass("Measure")[0].timeSignature.ratioString)
+
     def test_expand_repeats(self):
         s = converter.parse(EG_CORE / 'core.mxl').parts[0]
         expand_repeats(s)

@@ -1,0 +1,119 @@
+{0.0} <music21.metadata.Metadata object at 0x17bd5a8bac0>
+{0.0} <music21.stream.Part 0x17bd5a80610>
+    {0.0} <music21.stream.Measure 0 offset=0.0>
+        {0.0} <music21.key.Key of G major>
+        {0.0} <music21.meter.TimeSignature 4/4>
+        {0.0} <music21.roman.RomanNumeral I in G major>
+    {0.0} <music21.romanText.translate.RomanTextUnprocessedMetadata BWV: 267>
+    {0.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: please email corrections to dmitri@princeton.edu>
+    {0.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: virtually identical to no. 5>
+    {0.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Form: chorale>
+    {1.0} <music21.stream.Measure 1 offset=1.0>
+        {0.0} <music21.roman.RomanNumeral IV in G major>
+        {1.0} <music21.roman.RomanNumeral V in G major>
+        {1.5} <music21.roman.RomanNumeral V7 in G major>
+        {2.0} <music21.roman.RomanNumeral vi in G major>
+        {3.0} <music21.roman.RomanNumeral V6 in G major>
+    {1.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: Doubled leading tone on m1 b4, the upper of which does not (immediately) resolve>
+    {1.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: closely related to the Bach canonical voice leading>
+    {1.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: b4.5 could be read as Imaj7!!!>
+    {5.0} <music21.stream.Measure 2 offset=5.0>
+        {0.0} <music21.roman.RomanNumeral ii in G major>
+        {0.5} <music21.roman.RomanNumeral ii7 in G major>
+        {1.0} <music21.roman.RomanNumeral V7 in G major>
+        {2.0} <music21.roman.RomanNumeral I in G major>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral V6 in G major>
+    {5.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: V6 to ii progresson from m1-m2>
+    {9.0} <music21.stream.Measure 3 offset=9.0>
+        {0.0} <music21.roman.RomanNumeral I in G major>
+        {1.0} <music21.roman.RomanNumeral IV6 in G major>
+        {2.0} <music21.roman.RomanNumeral I6 in G major>
+        {3.0} <music21.roman.RomanNumeral IV in G major>
+    {13.0} <music21.stream.Measure 4a offset=13.0>
+        {0.0} <music21.roman.RomanNumeral V in G major>
+        {1.0} <music21.roman.RomanNumeral V7 in G major>
+        {2.0} <music21.roman.RomanNumeral I in G major>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.bar.Repeat direction=end>
+    {16.0} <music21.stream.Measure 4b offset=16.0>
+        {0.0} <music21.meter.TimeSignature 4/4>
+        {0.0} <music21.roman.RomanNumeral I in G major>
+    {17.0} <music21.stream.Measure 5 offset=17.0>
+        {0.0} <music21.roman.RomanNumeral V6 in G major>
+        {1.0} <music21.roman.RomanNumeral iii6 in G major>
+        {2.0} <music21.roman.RomanNumeral IV6 in G major>
+        {3.0} <music21.roman.RomanNumeral V6 in G major>
+    {21.0} <music21.stream.Measure 6 offset=21.0>
+        {0.0} <music21.roman.RomanNumeral I in G major>
+        {1.0} <music21.roman.RomanNumeral V7 in G major>
+        {2.0} <music21.roman.RomanNumeral I in G major>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral IV in G major>
+    {25.0} <music21.stream.Measure 7 offset=25.0>
+        {0.0} <music21.roman.RomanNumeral V in C major>
+        {0.5} <music21.roman.RomanNumeral V2 in C major>
+        {1.0} <music21.roman.RomanNumeral I6 in C major>
+        {2.0} <music21.roman.RomanNumeral V6/5 in C major>
+        {3.0} <music21.roman.RomanNumeral I in C major>
+    {25.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: hints of a G: IV-V9-vi progression in m7-8.>
+    {29.0} <music21.stream.Measure 8 offset=29.0>
+        {0.0} <music21.roman.RomanNumeral ii in D major>
+        {1.0} <music21.roman.RomanNumeral V7 in D major>
+        {2.0} <music21.roman.RomanNumeral I in D major>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral I in G major>
+    {29.0} <music21.romanText.translate.RomanTextUnprocessedMetadata Note: discursive modulation>
+    {33.0} <music21.stream.Measure 9 offset=33.0>
+        {0.0} <music21.roman.RomanNumeral I6 in G major>
+        {1.0} <music21.roman.RomanNumeral IV in G major>
+        {2.0} <music21.roman.RomanNumeral V6 in G major>
+        {2.5} <music21.roman.RomanNumeral V6/5 in G major>
+        {3.0} <music21.roman.RomanNumeral V6 in a minor>
+    {37.0} <music21.stream.Measure 10 offset=37.0>
+        {0.0} <music21.roman.RomanNumeral i in a minor>
+        {2.0} <music21.roman.RomanNumeral V in a minor>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral V6 in a minor>
+        {3.5} <music21.roman.RomanNumeral V6/5 in a minor>
+    {41.0} <music21.stream.Measure 11 offset=41.0>
+        {0.0} <music21.roman.RomanNumeral i in a minor>
+        {1.0} <music21.roman.RomanNumeral i6 in a minor>
+        {1.5} <music21.roman.RomanNumeral i in a minor>
+        {2.0} <music21.roman.RomanNumeral iv6 in a minor>
+        {3.0} <music21.roman.RomanNumeral iv in a minor>
+        {3.5} <music21.roman.RomanNumeral iio6 in a minor>
+    {45.0} <music21.stream.Measure 12 offset=45.0>
+        {0.0} <music21.roman.RomanNumeral i6/4 in a minor>
+        {1.0} <music21.roman.RomanNumeral V7 in a minor>
+        {2.0} <music21.roman.RomanNumeral i in a minor>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral i in a minor>
+        {3.5} <music21.roman.RomanNumeral viio6 in G major>
+    {49.0} <music21.stream.Measure 13 offset=49.0>
+        {0.0} <music21.roman.RomanNumeral I6 in G major>
+        {0.5} <music21.roman.RomanNumeral viiø7 in d minor>
+        {1.0} <music21.roman.RomanNumeral i in d minor>
+        {2.0} <music21.roman.RomanNumeral iiø2 in d minor>
+        {3.0} <music21.roman.RomanNumeral V6 in d minor>
+        {3.5} <music21.roman.RomanNumeral V6/5 in d minor>
+    {53.0} <music21.stream.Measure 14 offset=53.0>
+        {0.0} <music21.roman.RomanNumeral i in d minor>
+        {1.0} <music21.roman.RomanNumeral V7 in d minor>
+        {2.0} <music21.roman.RomanNumeral I in d minor>
+        {2.0} <music21.romanText.translate.RomanTextUnprocessedToken offset=2.0 obj='<music21.romanText.rtObjects.R...>'>
+        {3.0} <music21.roman.RomanNumeral iii in G major>
+    {57.0} <music21.stream.Measure 15 offset=57.0>
+        {0.0} <music21.roman.RomanNumeral vi in G major>
+        {1.0} <music21.roman.RomanNumeral V in G major>
+        {2.0} <music21.roman.RomanNumeral I in G major>
+        {3.0} <music21.roman.RomanNumeral vi in G major>
+    {61.0} <music21.stream.Measure 16 offset=61.0>
+        {0.0} <music21.roman.RomanNumeral iii in G major>
+        {1.0} <music21.roman.RomanNumeral I in G major>
+        {2.0} <music21.roman.RomanNumeral ii6/5 in G major>
+        {3.0} <music21.roman.RomanNumeral ii7 in G major>
+    {65.0} <music21.stream.Measure 17 offset=65.0>
+        {0.0} <music21.roman.RomanNumeral V in G major>
+        {1.5} <music21.roman.RomanNumeral V7 in G major>
+        {2.0} <music21.roman.RomanNumeral I in G major>

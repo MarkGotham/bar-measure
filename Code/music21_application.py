@@ -44,59 +44,96 @@ class Aligner:
         else:
             self.other = converter.parse(self.path_to_other)
 
+        for part in self.preferred.getElementsByClass(stream.Part):
+            impose_numbering_standard(part, "Full Measure")
+        for part in self.other.getElementsByClass(stream.Part):
+            impose_numbering_standard(part, "Full Measure")  # TODO: Have at start?
+
         # MM
         self.preferred_measure_map = stream_to_measure_map(self.preferred, check_parts_match)
         self.other_measure_map = stream_to_measure_map(self.other, check_parts_match)
 
         if write:
             if outpath is None:
-                outpath = path_to_preferred.parent
-            preferred_outpath = outpath / 'preferred_measure_map.json'
-            other_outpath = outpath / 'other_measure_map.json'
+                outpath1 = path_to_preferred.parent
+                outpath2 = path_to_other.parent
+            preferred_outpath = outpath1 / 'preferred_measure_map.json'
+            other_outpath = outpath2 / 'other_measure_map.json'
             write_measure_map(self.preferred_measure_map, path=preferred_outpath)
             write_measure_map(self.other_measure_map, path=other_outpath)
 
-        this_compare_object = Code.measuring_bars.Compare(self.preferred_measure_map, self.other_measure_map, attempt_fix=True)
+        this_compare_object = Code.measuring_bars.Compare(self.preferred_measure_map, self.other_measure_map, attempt_fix=attempt_fix, write_modifications=write_modifications)
+        Error = [item for item in this_compare_object.diagnosis if item[0] == "Needleman-Wunsch"]
+        # print(this_compare_object.diagnosis)  # TODO: remove
+        """if 'test' in this_compare_object.diagnosis:
+            this_compare_object.diagnosis.remove('test')
+            Error = Code.measuring_bars.needleman_wunsch(stream_to_measure_map(self.preferred, check_parts_match), stream_to_measure_map(self.other, check_parts_match))
+            print(stream_to_measure_map(self.preferred, check_parts_match))
+            print(stream_to_measure_map(self.other, check_parts_match))
+            for x in range(len(Error[0])):
+                print(f"Preferred: {Error[0][x]}")
+                print(f"Other: {Error[1][x]}")
+                print("")"""  # TODO: remove
 
-        if attempt_fix:
-            for change in this_compare_object.diagnosis:  # TODO: Iterate through parts?
-                if change[0] == "Join":
-                    join_measures(self.other.parts[0], change)
-                elif change[0] == "Split":
-                    split_measure(self.other.parts[0], change)
-                elif change[0] == "Expand_Repeats":
-                    expand_repeats(self.other)
-                elif change[0] == "Renumber":
-                    impose_numbering_standard(self.other.parts[0], "Full Measure")
-                elif change[0] == "Repeat_Marks":
-                    copy_repeat_marks(self.other.parts[0], change)
-                elif change[0] == "Measure_Length":
-                    copy_length(self.other.parts[0], change)
-                """elif change[0] == "Add":
-                elif change[0] == "Remove":"""
+        if write_modifications:
+            with open(path_to_other.parent / 'other_modifications.txt', "w") as file:
+                if Error:
+                    for x in range(len(Error[0][1])):
+                        """print(f"Preferred: {Error[0][1][x]}")
+                        print(f"Other: {Error[0][2][x]}")
+                        print("")"""  # TODO: remove
+                    file.write("Could not align the two sources. Best alignment based on Needleman-Wunsch algorithm:\n")
+                    file.write(f"Preferred measure map aligned: {Error[0][1]}\n")
+                    file.write(f"Other measure map aligned: {Error[0][2]}\n")
+                else:
+                    file.write("Changes to be made to secondary measure map:\n")
+                    for change in this_compare_object.diagnosis:
+                        if change[0] == "Join":
+                            file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
+                        elif change[0] == "Split":
+                            file.write(f" - Split measure {change[1]} at offset {change[2]}.\n")
+                        elif change[0] == "Expand_Repeats":
+                            file.write(" - Expand the repeats.\n")
+                        elif change[0] == "Renumber":
+                            file.write(" - Renumber the measures.\n")
+                        elif change[0] == "Repeat_Marks":
+                            file.write(f" - Add {change[2]} repeat marks to measure {change[1]}.\n")
+                        elif change[0] == "Measure_Length":
+                            file.write(f" - Change measure {change[1]}'s actual length to {change[2]}.\n")
+                        elif change[0] == "Time_Signature":
+                            file.write(f" - Change measure {change[1]}'s time signature to {change[2]}.\n")
+
+        if attempt_fix and not Error:
+            for change in this_compare_object.diagnosis:  # TODO: multiple parts?
+                for part in self.other.getElementsByClass(stream.Part):
+                    if change[0] == "Join":
+                        join_measures(part, change)
+                    elif change[0] == "Split":
+                        split_measure(part, change)
+                    elif change[0] == "Expand_Repeats":
+                        expand_repeats(self.other)
+                    elif change[0] == "Renumber":
+                        impose_numbering_standard(part, "Full Measure")
+                    elif change[0] == "Repeat_Marks":
+                        copy_repeat_marks(part, change)
+                    elif change[0] == "Measure_Length":
+                        copy_length(part, change)
+                    elif change[0] == "Time_Signature":
+                        copy_time_signature(part, change)
+                        removeDuplicates(part)
+
+            self.other.write('musicxml', path_to_other.parent / "modified_other_score.mxl")
+            self.preferred.write('musicxml', path_to_preferred.parent / "modified_preferred_score.mxl")  # TODO: impose numbering standard on all preferred?
 
             # self.other.parts[0].show('text')
             # self.preferred.parts[0].show('text')
 
-        if write_modifications:
-            with open(path_to_other.parent / 'other_modifications.txt', "w") as file:
-                file.write("Changes to be made to secondary measure map:\n")
-                for change in this_compare_object.diagnosis:
-                    if change[0] == "Join":
-                        file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
-                    elif change[0] == "Split":
-                        file.write(f" - Split measure {change[1]} at offset {change[2]}.\n")
-                    elif change[0] == "Expand_Repeats":
-                        file.write(" - Expand the repeats.\n")
-                    elif change[0] == "Renumber":
-                        file.write(" - Renumber the measures.\n")
-                    elif change[0] == "Repeat_Marks":
-                        file.write(f" - Add {change[2]} repeat marks to measure {change[1]}.\n")
-                    elif change[0] == "Measure_Length":
-                        file.write(f" - Change measure {change[1]}'s actual length to {change[2]}.\n")
+        if not attempt_fix and not write_modifications:
+            print(this_compare_object.diagnosis)
 
         # removeDuplicates(self.other)
         # self.other.show()
+
 
 def generate_examples(path_to_examples: str = '../Examples/'):
     """
@@ -272,17 +309,18 @@ def expand_repeats(part_to_fix: stream.Stream):
     Expand all the repeats in a part
     """
 
-    expanded_part = part_to_fix.expandRepeats()
-    measures = expanded_part.getElementsByClass(stream.Measure)
-    for measure in measures:
-        if measure.measureNumber > 0:
-            measure.leftBarline = None
-            measure.rightBarline = None
-    measure[-1].rightBarline = bar.Barline(type='final')
+    expanded = part_to_fix.expandRepeats()
+    for part in expanded.getElementsByClass(stream.Part):
+        measures = part.getElementsByClass(stream.Measure)
+        for measure in measures:
+            if measure.measureNumber > 0:
+                measure.leftBarline = None
+                measure.rightBarline = None
+        measures[-1].rightBarline = bar.Barline(type='final')
     # TODO: music21 keeps repeat Clef and TimeSig
-    removeDuplicates(expanded_part)  # stream.tools.removeDuplicates(expanded_part)
+    removeDuplicates(expanded)  # stream.tools.removeDuplicates(expanded_part)
     # expanded_part.show()
-    return expanded_part
+    return expanded
 
 
 def copy_repeat_marks(part_to_fix: stream.Part, diagnosis: tuple):
@@ -314,6 +352,20 @@ def copy_length(part_to_fix: stream.Part, diagnosis: tuple):
 
     measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
     measure.duration.quarterLength = diagnosis[2]
+
+
+def copy_time_signature(part_to_fix: stream.Part, diagnosis: tuple):
+    """
+    Copy the time_signature from the preferred part to the other part
+    """
+
+    assert diagnosis[0] == "Time_Signature"
+    assert len(diagnosis) == 3
+    assert isinstance(diagnosis[1], int)
+    assert isinstance(diagnosis[2], str)
+
+    measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
+    measure.timeSignature = meter.TimeSignature(diagnosis[2])
 
 
 def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
@@ -360,7 +412,7 @@ def impose_numbering_standard(part_to_fix: stream.Part, standard: str = None):
             measure.number = count
             count += 1
     else:
-        raise ValueError
+        raise ValueError("Invalid measuring standard.")
 
     return part_to_fix
 
@@ -475,7 +527,3 @@ def removeDuplicates(thisStream: stream.Stream,
     return thisStream
 
 # ------------------------------------------------------------------------------
-
-
-# generate_examples()
-# generate_examples("../Example_core/")

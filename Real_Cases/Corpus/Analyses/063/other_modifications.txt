@@ -1,0 +1,3 @@
+Changes to be made to secondary measure map:
+ - Add end repeat marks to measure 4.
+ - Change measure 0's actual length to 4.0.

@@ -1,0 +1,5 @@
+Changes to be made to secondary measure map:
+ - Split measure 8 at offset 3.0.
+ - Add end repeat marks to measure 8.
+ - Change measure 21's actual length to 3.0.
+ - Change measure 12's time signature to 4/4.

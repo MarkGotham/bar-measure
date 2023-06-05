@@ -1,340 +1,340 @@
 [
     {
-        "measure_count": 1,
-        "offset": 0.0,
-        "measure_number": 0,
+        "count": 1,
+        "qstamp": 0.0,
+        "number": 0,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             2
         ]
     },
     {
-        "measure_count": 2,
-        "offset": 1.0,
-        "measure_number": 1,
+        "count": 2,
+        "qstamp": 1.0,
+        "number": 1,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             3
         ]
     },
     {
-        "measure_count": 3,
-        "offset": 5.0,
-        "measure_number": 2,
+        "count": 3,
+        "qstamp": 5.0,
+        "number": 2,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             4
         ]
     },
     {
-        "measure_count": 4,
-        "offset": 9.0,
-        "measure_number": 3,
+        "count": 4,
+        "qstamp": 9.0,
+        "number": 3,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             5
         ]
     },
     {
-        "measure_count": 5,
-        "offset": 13.0,
-        "measure_number": 4,
+        "count": 5,
+        "qstamp": 13.0,
+        "number": 4,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": true,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": true,
+        "next": [
             1,
             6
         ]
     },
     {
-        "measure_count": 6,
-        "offset": 16.0,
-        "measure_number": 4,
+        "count": 6,
+        "qstamp": 16.0,
+        "number": 4,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": true,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": true,
+        "end_repeat": false,
+        "next": [
             7
         ]
     },
     {
-        "measure_count": 7,
-        "offset": 17.0,
-        "measure_number": 5,
+        "count": 7,
+        "qstamp": 17.0,
+        "number": 5,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             8
         ]
     },
     {
-        "measure_count": 8,
-        "offset": 21.0,
-        "measure_number": 6,
+        "count": 8,
+        "qstamp": 21.0,
+        "number": 6,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             9
         ]
     },
     {
-        "measure_count": 9,
-        "offset": 25.0,
-        "measure_number": 7,
+        "count": 9,
+        "qstamp": 25.0,
+        "number": 7,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             10
         ]
     },
     {
-        "measure_count": 10,
-        "offset": 29.0,
-        "measure_number": 8,
+        "count": 10,
+        "qstamp": 29.0,
+        "number": 8,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": true,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": true,
+        "next": [
             6,
             11
         ]
     },
     {
-        "measure_count": 11,
-        "offset": 32.0,
-        "measure_number": 8,
+        "count": 11,
+        "qstamp": 32.0,
+        "number": 8,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             12
         ]
     },
     {
-        "measure_count": 12,
-        "offset": 33.0,
-        "measure_number": 9,
+        "count": 12,
+        "qstamp": 33.0,
+        "number": 9,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             13
         ]
     },
     {
-        "measure_count": 13,
-        "offset": 37.0,
-        "measure_number": 10,
+        "count": 13,
+        "qstamp": 37.0,
+        "number": 10,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             14
         ]
     },
     {
-        "measure_count": 14,
-        "offset": 41.0,
-        "measure_number": 11,
+        "count": 14,
+        "qstamp": 41.0,
+        "number": 11,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             15
         ]
     },
     {
-        "measure_count": 15,
-        "offset": 45.0,
-        "measure_number": 12,
+        "count": 15,
+        "qstamp": 45.0,
+        "number": 12,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             16
         ]
     },
     {
-        "measure_count": 16,
-        "offset": 49.0,
-        "measure_number": 13,
+        "count": 16,
+        "qstamp": 49.0,
+        "number": 13,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             17
         ]
     },
     {
-        "measure_count": 17,
-        "offset": 53.0,
-        "measure_number": 14,
+        "count": 17,
+        "qstamp": 53.0,
+        "number": 14,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             18
         ]
     },
     {
-        "measure_count": 18,
-        "offset": 57.0,
-        "measure_number": 15,
+        "count": 18,
+        "qstamp": 57.0,
+        "number": 15,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             19
         ]
     },
     {
-        "measure_count": 19,
-        "offset": 61.0,
-        "measure_number": 16,
+        "count": 19,
+        "qstamp": 61.0,
+        "number": 16,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             20
         ]
     },
     {
-        "measure_count": 20,
-        "offset": 65.0,
-        "measure_number": 17,
+        "count": 20,
+        "qstamp": 65.0,
+        "number": 17,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             21
         ]
     },
     {
-        "measure_count": 21,
-        "offset": 69.0,
-        "measure_number": 18,
+        "count": 21,
+        "qstamp": 69.0,
+        "number": 18,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             22
         ]
     },
     {
-        "measure_count": 22,
-        "offset": 72.0,
-        "measure_number": 18,
+        "count": 22,
+        "qstamp": 72.0,
+        "number": 18,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             23
         ]
     },
     {
-        "measure_count": 23,
-        "offset": 73.0,
-        "measure_number": 19,
+        "count": 23,
+        "qstamp": 73.0,
+        "number": 19,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             24
         ]
     },
     {
-        "measure_count": 24,
-        "offset": 77.0,
-        "measure_number": 20,
+        "count": 24,
+        "qstamp": 77.0,
+        "number": 20,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             25
         ]
     },
     {
-        "measure_count": 25,
-        "offset": 81.0,
-        "measure_number": 21,
+        "count": 25,
+        "qstamp": 81.0,
+        "number": 21,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             26
         ]
     },
     {
-        "measure_count": 26,
-        "offset": 85.0,
-        "measure_number": 22,
+        "count": 26,
+        "qstamp": 85.0,
+        "number": 22,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": []
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": []
     }
 ]

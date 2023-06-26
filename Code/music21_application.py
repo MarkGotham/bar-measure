@@ -564,4 +564,20 @@ def removeDuplicates(
     return thisStream
 
 
+def run_corpus(
+    base_path: Path = REPO_FOLDER.parent / "When-in-Rome" / "Corpus",
+    preferred_name: str = "score.mxl",
+    other_name: str = "analysis.txt"
+) -> None:
+    """
+    Run measure map comparisons on a corpus.
+    Set up with defaults for a local copy of `When in Rome` where the directory structure has
+    pairs of corresponding `preferred` and `other`
+    sources in the same folder.
+    """
+    for pref in base_path.rglob(preferred_name):
+        other = pref.parent / other_name
+        Aligner(pref, other, attempt_fix=True, write_maps=True, check_parts_match=False, write_diagnosis=True)
+
+
 # ------------------------------------------------------------------------------

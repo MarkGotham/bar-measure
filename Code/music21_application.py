@@ -40,6 +40,7 @@ class Aligner:
         path_to_other: Path,
         impose_numbering_first: bool = True,
         write_maps: bool = True,
+        write_diagnosis: bool = True,
         attempt_fix: bool = False,
         check_parts_match: bool = True
     ):
@@ -84,6 +85,9 @@ class Aligner:
 
         if self.attempt_fix and not self.error:
             self.attempt_fix()
+
+        if write_diagnosis:
+            self.write_diagnosis()
 
     def write_mm(self, outpath: Path = None):
         """Write the measure maps"""

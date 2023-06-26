@@ -1,2 +1,0 @@
-Changes to be made to secondary measure map:
- - Change measure 8's actual length to 3.0.

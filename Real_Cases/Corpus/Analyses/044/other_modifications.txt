@@ -1,4 +1,0 @@
-Changes to be made to secondary measure map:
- - Split measure 5 at offset 3.0.
- - Add end repeat marks to measure 5.
- - Change measure 9's actual length to 3.0.

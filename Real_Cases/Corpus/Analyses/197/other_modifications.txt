@@ -1,3 +1,0 @@
-Changes to be made to secondary measure map:
- - Split measure 21 at offset 4.0.
- - Renumber the measures.

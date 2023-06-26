@@ -1,2 +1,0 @@
-Changes to be made to secondary measure map:
- - Add start repeat marks to measure 15.

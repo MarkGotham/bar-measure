@@ -1,4 +1,0 @@
-Changes to be made to secondary measure map:
- - Change measure 7's actual length to 6.0.
- - Change measure 6's time signature to 4/4.
- - Change measure 7's time signature to 4/4.

@@ -8,7 +8,7 @@ from Code.music21_application import *
 from pathlib import Path
 import json
 
-REPO_FOLDER = Path(__file__).parent.parent
+from . import REPO_FOLDER
 
 
 class Test(TestCase):

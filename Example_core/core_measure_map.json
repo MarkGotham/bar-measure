@@ -6,7 +6,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             2
@@ -19,7 +19,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             3
@@ -32,7 +32,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": true,
         "next_measure": [
             1,
@@ -46,7 +46,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": true,
+        "start_repeat": true,
         "has_end_repeat": false,
         "next_measure": [
             5
@@ -59,7 +59,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             6,
@@ -73,7 +73,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             7
@@ -86,7 +86,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": true,
         "next_measure": [
             4
@@ -99,7 +99,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             9
@@ -112,7 +112,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": [
             10
@@ -125,7 +125,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next_measure": []
     }

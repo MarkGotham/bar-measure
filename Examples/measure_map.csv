@@ -1,4 +1,4 @@
-'measure_count','offset','measure_number','nominal_length','actual_length','time_signature','has_start_repeat','has_end_repeat','next_measure'
+'count','offset','measure_number','nominal_length','actual_length','time_signature','has_start_repeat','has_end_repeat','next_measure'
 1,0.0,0,4.0,1.0,'4/4',False,False,'[2]'
 2,1.0,1,4.0,4.0,'4/4',False,False,'[3]'
 3,5.0,2,4.0,3.0,'4/4',False,True,'[1, 4]'

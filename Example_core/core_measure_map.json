@@ -7,7 +7,7 @@
         "actual_length": 1.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             2
         ]
@@ -20,7 +20,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             3
         ]
@@ -33,7 +33,7 @@
         "actual_length": 3.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": true,
+        "end_repeat": true,
         "next_measure": [
             1,
             4
@@ -47,7 +47,7 @@
         "actual_length": 1.0,
         "time_signature": "4/4",
         "start_repeat": true,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             5
         ]
@@ -60,7 +60,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             6,
             8
@@ -74,7 +74,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             7
         ]
@@ -87,7 +87,7 @@
         "actual_length": 3.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": true,
+        "end_repeat": true,
         "next_measure": [
             4
         ]
@@ -100,7 +100,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             9
         ]
@@ -113,7 +113,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": [
             10
         ]
@@ -126,7 +126,7 @@
         "actual_length": 3.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next_measure": []
     }
 ]

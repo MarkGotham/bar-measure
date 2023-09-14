@@ -27,8 +27,8 @@ from pathlib import Path
 from music21 import bar, clef, converter, key, meter, stream
 from typing import Dict
 
-from . import measuring_bars
-from . import REPO_FOLDER
+from Code import measuring_bars
+from Code import REPO_FOLDER
 
 
 # ------------------------------------------------------------------------------
@@ -581,3 +581,6 @@ def run_corpus(
 
 
 # ------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    run_corpus()

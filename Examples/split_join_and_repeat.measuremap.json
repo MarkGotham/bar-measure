@@ -7,7 +7,7 @@
         "actual_length": 1.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             2
         ]
@@ -20,7 +20,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             3
         ]
@@ -33,7 +33,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             4
         ]
@@ -46,7 +46,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             5,
             7
@@ -60,7 +60,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             6
         ]
@@ -73,7 +73,7 @@
         "actual_length": 3.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": true,
+        "end_repeat": true,
         "next": [
             1
         ]
@@ -86,7 +86,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             8
         ]
@@ -99,7 +99,7 @@
         "actual_length": 4.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": [
             9
         ]
@@ -112,7 +112,7 @@
         "actual_length": 3.0,
         "time_signature": "4/4",
         "start_repeat": false,
-        "has_end_repeat": false,
+        "end_repeat": false,
         "next": []
     }
 ]

@@ -1,7 +1,7 @@
 Changes to be made to secondary measure map:
- - Split measure 5 at offset 3.0.
- - Split measure 10 at offset 3.0.
- - Split measure 21 at offset 3.0.
+ - Split measure 5 at qstamp 3.0.
+ - Split measure 10 at qstamp 3.0.
+ - Split measure 21 at qstamp 3.0.
  - Add end repeat marks to measure 5.
  - Add start repeat marks to measure 6.
  - Add end repeat marks to measure 10.

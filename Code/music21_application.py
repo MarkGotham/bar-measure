@@ -120,7 +120,7 @@ class Aligner:
                     if change[0] == "Join":
                         file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
                     elif change[0] == "Split":
-                        file.write(f" - Split measure {change[1]} at offset {change[2]}.\n")
+                        file.write(f" - Split measure {change[1]} at qstamp {change[2]}.\n")
                     elif change[0] == "Expand_Repeats":
                         file.write(" - Expand the repeats.\n")
                     elif change[0] == "Renumber":
@@ -257,7 +257,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
 
         measure_dict = {
             "count": count,
-            "qstamp": measure.offset,
+            "qstamp": measure.qstamp,
             "number": measure.measureNumber,
             # "suffix": measure.suffix,
             "nominal_length": measure.barDuration.quarterLength,
@@ -278,7 +278,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
 
 def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     """
-    Split one measure on a part defined by the tuple in the form ("split", count, offset)
+    Split one measure on a part defined by the tuple in the form ("split", count, qstamp)
     """
 
     assert diagnosis[0] == "Split"
@@ -287,13 +287,13 @@ def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     assert isinstance(diagnosis[2], float)
 
     measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
-    offset = measure.offset
+    qstamp = measure.qstamp
     first_part, second_part = measure.splitAtQuarterLength(diagnosis[2])
     # second_part.removeClasses()  # TODO?
     second_part.number = first_part.measureNumber
     first_part.numberSuffix = "a"
     second_part.numberSuffix = "b"
-    part_to_fix.insert(offset + diagnosis[2], second_part)
+    part_to_fix.insert(qstamp + diagnosis[2], second_part)
     removeDuplicates(part_to_fix)  # stream.tools.removeDuplicates(part_to_fix)
 
 
@@ -320,7 +320,7 @@ def join_measures(part_to_fix: stream.Part, diagnosis: tuple) -> stream.Part:
     base_ql = target_measure.quarterLength
 
     for x in source_measure:
-        target_measure.insert(base_ql + x.offset, x)
+        target_measure.insert(base_ql + x.qstamp, x)
 
     part_to_fix.remove(source_measure)
 

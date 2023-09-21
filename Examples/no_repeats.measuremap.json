@@ -1,7 +1,7 @@
 [
     {
         "count": 1,
-        "offset": 0.0,
+        "qstamp": 0.0,
         "measure_number": 0,
         "nominal_length": 4.0,
         "actual_length": 1.0,
@@ -14,7 +14,7 @@
     },
     {
         "count": 2,
-        "offset": 1.0,
+        "qstamp": 1.0,
         "measure_number": 1,
         "nominal_length": 4.0,
         "actual_length": 4.0,
@@ -27,7 +27,7 @@
     },
     {
         "count": 3,
-        "offset": 5.0,
+        "qstamp": 5.0,
         "measure_number": 2,
         "nominal_length": 4.0,
         "actual_length": 3.0,
@@ -40,7 +40,7 @@
     },
     {
         "count": 4,
-        "offset": 8.0,
+        "qstamp": 8.0,
         "measure_number": 3,
         "nominal_length": 4.0,
         "actual_length": 1.0,
@@ -53,7 +53,7 @@
     },
     {
         "count": 5,
-        "offset": 9.0,
+        "qstamp": 9.0,
         "measure_number": 4,
         "nominal_length": 4.0,
         "actual_length": 4.0,
@@ -66,7 +66,7 @@
     },
     {
         "count": 6,
-        "offset": 13.0,
+        "qstamp": 13.0,
         "measure_number": 5,
         "nominal_length": 4.0,
         "actual_length": 4.0,
@@ -79,7 +79,7 @@
     },
     {
         "count": 7,
-        "offset": 17.0,
+        "qstamp": 17.0,
         "measure_number": 6,
         "nominal_length": 4.0,
         "actual_length": 3.0,
@@ -92,7 +92,7 @@
     },
     {
         "count": 8,
-        "offset": 20.0,
+        "qstamp": 20.0,
         "measure_number": 7,
         "nominal_length": 4.0,
         "actual_length": 4.0,
@@ -105,7 +105,7 @@
     },
     {
         "count": 9,
-        "offset": 24.0,
+        "qstamp": 24.0,
         "measure_number": 8,
         "nominal_length": 4.0,
         "actual_length": 4.0,
@@ -118,7 +118,7 @@
     },
     {
         "count": 10,
-        "offset": 28.0,
+        "qstamp": 28.0,
         "measure_number": 9,
         "nominal_length": 4.0,
         "actual_length": 3.0,

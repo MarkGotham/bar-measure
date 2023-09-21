@@ -6,7 +6,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             2
@@ -19,7 +19,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             3
@@ -32,7 +32,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             4
@@ -45,7 +45,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             5
@@ -58,7 +58,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             6
@@ -71,7 +71,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             7
@@ -84,7 +84,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             8
@@ -97,7 +97,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             9
@@ -110,7 +110,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             10
@@ -123,7 +123,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             11
@@ -136,7 +136,7 @@
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             12
@@ -149,7 +149,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             13
@@ -162,7 +162,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             14
@@ -175,7 +175,7 @@
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": [
             15
@@ -188,7 +188,7 @@
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
+        "start_repeat": false,
         "has_end_repeat": false,
         "next": []
     }

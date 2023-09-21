@@ -8,7 +8,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             2
         ]
     },
@@ -21,7 +21,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             3
         ]
     },
@@ -34,7 +34,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             4
         ]
     },
@@ -47,7 +47,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             5
         ]
     },
@@ -60,7 +60,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             6
         ]
     },
@@ -73,7 +73,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             7
         ]
     },
@@ -86,7 +86,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             8
         ]
     },
@@ -99,7 +99,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             9
         ]
     },
@@ -112,7 +112,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             10
         ]
     },
@@ -125,7 +125,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             11
         ]
     },
@@ -138,7 +138,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             12
         ]
     },
@@ -151,7 +151,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             13
         ]
     },
@@ -164,7 +164,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             14
         ]
     },
@@ -177,7 +177,7 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": [
+        "next": [
             15
         ]
     },
@@ -190,6 +190,6 @@
         "time_signature": "4/4",
         "has_start_repeat": false,
         "has_end_repeat": false,
-        "next_measure": []
+        "next": []
     }
 ]

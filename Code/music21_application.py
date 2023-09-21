@@ -92,11 +92,11 @@ class Aligner:
     def write_mm(self, outpath: Path = None):
         """Write the measure maps"""
         if outpath is not None:
-            preferred_outpath = outpath / "preferred_measure_map.json"
-            other_outpath = outpath / "other_measure_map.json"
+            preferred_outpath = outpath / "preferred.measuremap.json"
+            other_outpath = outpath / "other.measuremap.json"
         else:
-            preferred_outpath = self.path_to_preferred.parent / "preferred_measure_map.json"
-            other_outpath = self.path_to_other.parent / "other_measure_map.json"
+            preferred_outpath = self.path_to_preferred.parent / "preferred.measuremap.json"
+            other_outpath = self.path_to_other.parent / "other.measuremap.json"
 
         write_measure_map(self.preferred_measure_map, outpath=preferred_outpath)
         write_measure_map(self.other_measure_map, outpath=other_outpath)
@@ -167,7 +167,7 @@ def generate_examples(
         measure_map = stream_to_measure_map(score)
         write_measure_map(
             measure_map,
-            outpath=path_to_examples / (file.stem + "_measure_map.json")
+            outpath=path_to_examples / (file.stem + ".measuremap.json")
         )
 
 

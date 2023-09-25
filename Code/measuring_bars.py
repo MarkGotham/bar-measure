@@ -54,7 +54,7 @@ class Compare:
         self.preferred_length = len(self.preferred_mm)
         self.other_length = len(self.other_mm)
 
-        mismatch_offsets = False
+        mismatch_qstamps = False
         mismatch_number = False
         mismatch_time_signature = False
         mismatch_repeats = False
@@ -64,7 +64,7 @@ class Compare:
 
         for i in range(min(self.preferred_length, self.other_length)):
             if self.preferred_mm[i]["qstamp"] != self.other_mm[i].get("qstamp"):
-                mismatch_offsets = True
+                mismatch_qstamps = True
             if self.preferred_mm[i]["number"] != self.other_mm[i].get("number"):
                 mismatch_number = True
             if self.preferred_mm[i]["time_signature"] != self.other_mm[i].get("time_signature"):
@@ -82,7 +82,7 @@ class Compare:
 
         # print(self.other_mm)
 
-        if all(not x for x in [mismatch_offsets,
+        if all(not x for x in [mismatch_qstamps,
                                mismatch_number,
                                mismatch_time_signature,
                                mismatch_repeats,
@@ -168,7 +168,7 @@ class Compare:
             perform_time_signature_copy(self.preferred_mm, self.other_mm)
             self.diagnose()
 
-        elif mismatch_offsets:
+        elif mismatch_qstamps:
             perform_qstamp_recalculation(self.other_mm)
             self.diagnose()  # TODO: diagnosis?
 
@@ -202,7 +202,7 @@ def perform_split(other, change):
     """
     Performs a split on the other measure map
     at the measure count stored in change[1]
-    at the offset stored in change[2]
+    at the qstamp stored in change[2]
     """
 
     other.insert(change[1], other[
@@ -304,7 +304,7 @@ def perform_nominal_length_recalculation(other):
 
 def perform_qstamp_recalculation(other):
     """
-    Recalculate the offset using the actual_length
+    Recalculate the qstamp using the actual_length
     """
 
     other[0]["qstamp"] = 0.0

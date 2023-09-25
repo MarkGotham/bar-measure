@@ -1,132 +1,132 @@
 [
     {
         "count": 1,
-        "offset": 0.0,
-        "measure_number": 1,
+        "qstamp": 0.0,
+        "number": 1,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             2
         ]
     },
     {
         "count": 2,
-        "offset": 1.0,
-        "measure_number": 2,
+        "qstamp": 1.0,
+        "number": 2,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             3
         ]
     },
     {
         "count": 3,
-        "offset": 5.0,
-        "measure_number": 3,
+        "qstamp": 5.0,
+        "number": 3,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": true,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": true,
+        "next": [
             1,
             4
         ]
     },
     {
         "count": 4,
-        "offset": 8.0,
-        "measure_number": 4,
+        "qstamp": 8.0,
+        "number": 4,
         "nominal_length": 4.0,
         "actual_length": 1.0,
         "time_signature": "4/4",
-        "has_start_repeat": true,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": true,
+        "end_repeat": false,
+        "next": [
             5
         ]
     },
     {
         "count": 5,
-        "offset": 9.0,
-        "measure_number": 5,
+        "qstamp": 9.0,
+        "number": 5,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             6,
             8
         ]
     },
     {
         "count": 6,
-        "offset": 13.0,
-        "measure_number": 6,
+        "qstamp": 13.0,
+        "number": 6,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             7
         ]
     },
     {
         "count": 7,
-        "offset": 17.0,
-        "measure_number": 7,
+        "qstamp": 17.0,
+        "number": 7,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": true,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": true,
+        "next": [
             4
         ]
     },
     {
         "count": 8,
-        "offset": 20.0,
-        "measure_number": 8,
+        "qstamp": 20.0,
+        "number": 8,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             9
         ]
     },
     {
         "count": 9,
-        "offset": 24.0,
-        "measure_number": 9,
+        "qstamp": 24.0,
+        "number": 9,
         "nominal_length": 4.0,
         "actual_length": 4.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": [
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": [
             10
         ]
     },
     {
         "count": 10,
-        "offset": 28.0,
-        "measure_number": 10,
+        "qstamp": 28.0,
+        "number": 10,
         "nominal_length": 4.0,
         "actual_length": 3.0,
         "time_signature": "4/4",
-        "has_start_repeat": false,
-        "has_end_repeat": false,
-        "next_measure": []
+        "start_repeat": false,
+        "end_repeat": false,
+        "next": []
     }
 ]

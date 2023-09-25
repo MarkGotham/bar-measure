@@ -503,9 +503,9 @@ class Test(TestCase):
     def test_real_cases(self):
         base_path = REPO_FOLDER / "Real_Cases" / "Marias_Kirchgang"
 
-        with open(base_path / "preferred_measure_map.json", "r") as file:
+        with open(base_path / "preferred.measuremap.json", "r") as file:
             preferred = json.load(file)
-        with open(base_path / "other_measure_map.json", "r") as file:
+        with open(base_path / "other.measuremap.json", "r") as file:
             other = json.load(file)
         self.assertNotEqual(preferred, other)
         output = Compare(preferred, other).diagnose()

@@ -92,11 +92,11 @@ class Aligner:
     def write_mm(self, outpath: Path = None):
         """Write the measure maps"""
         if outpath is not None:
-            preferred_outpath = outpath / "preferred_measure_map.json"
-            other_outpath = outpath / "other_measure_map.json"
+            preferred_outpath = outpath / "preferred.measuremap.json"
+            other_outpath = outpath / "other.measuremap.json"
         else:
-            preferred_outpath = self.path_to_preferred.parent / "preferred_measure_map.json"
-            other_outpath = self.path_to_other.parent / "other_measure_map.json"
+            preferred_outpath = self.path_to_preferred.parent / "preferred.measuremap.json"
+            other_outpath = self.path_to_other.parent / "other.measuremap.json"
 
         write_measure_map(self.preferred_measure_map, outpath=preferred_outpath)
         write_measure_map(self.other_measure_map, outpath=other_outpath)
@@ -120,7 +120,7 @@ class Aligner:
                     if change[0] == "Join":
                         file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
                     elif change[0] == "Split":
-                        file.write(f" - Split measure {change[1]} at offset {change[2]}.\n")
+                        file.write(f" - Split measure {change[1]} at qstamp {change[2]}.\n")
                     elif change[0] == "Expand_Repeats":
                         file.write(" - Expand the repeats.\n")
                     elif change[0] == "Renumber":
@@ -167,7 +167,7 @@ def generate_examples(
         measure_map = stream_to_measure_map(score)
         write_measure_map(
             measure_map,
-            outpath=path_to_examples / (file.stem + "_measure_map.json")
+            outpath=path_to_examples / (file.stem + ".measuremap.json")
         )
 
 
@@ -257,7 +257,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
 
         measure_dict = {
             "count": count,
-            "qstamp": measure.offset,
+            "qstamp": measure.qstamp,
             "number": measure.measureNumber,
             # "suffix": measure.suffix,
             "nominal_length": measure.barDuration.quarterLength,
@@ -278,7 +278,7 @@ def part_to_measure_map(this_part: stream.Part) -> list:
 
 def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     """
-    Split one measure on a part defined by the tuple in the form ("split", count, offset)
+    Split one measure on a part defined by the tuple in the form ("split", count, qstamp)
     """
 
     assert diagnosis[0] == "Split"
@@ -287,13 +287,13 @@ def split_measure(part_to_fix: stream.Part, diagnosis: tuple):
     assert isinstance(diagnosis[2], float)
 
     measure = part_to_fix.getElementsByClass(stream.Measure)[diagnosis[1] - 1]
-    offset = measure.offset
+    qstamp = measure.qstamp
     first_part, second_part = measure.splitAtQuarterLength(diagnosis[2])
     # second_part.removeClasses()  # TODO?
     second_part.number = first_part.measureNumber
     first_part.numberSuffix = "a"
     second_part.numberSuffix = "b"
-    part_to_fix.insert(offset + diagnosis[2], second_part)
+    part_to_fix.insert(qstamp + diagnosis[2], second_part)
     removeDuplicates(part_to_fix)  # stream.tools.removeDuplicates(part_to_fix)
 
 
@@ -320,7 +320,7 @@ def join_measures(part_to_fix: stream.Part, diagnosis: tuple) -> stream.Part:
     base_ql = target_measure.quarterLength
 
     for x in source_measure:
-        target_measure.insert(base_ql + x.offset, x)
+        target_measure.insert(base_ql + x.qstamp, x)
 
     part_to_fix.remove(source_measure)
 

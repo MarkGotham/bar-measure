@@ -4,10 +4,12 @@ import os
 import warnings
 from dataclasses import dataclass, asdict
 from numbers import Number
-from typing import Protocol, runtime_checkable, Optional
+ from typing import Protocol, runtime_checkable, Optional, Sequence, List, Iterator
 
 from Code.utils import time_signature2nominal_length, collect_measure_maps
 
+
+# region Measure
 
 @runtime_checkable
 class PMeasure(Protocol):
@@ -160,8 +162,6 @@ def make_default_successor(
     if successor_values['name'] is not None:
         assert number_field_is_present, "Cannot created default 'name' field because 'number' is not specified."
         successor_values['name'] = str(successor_values['number'])
-    if successor_values['actual_length'] is not None:
-        successor_values['actual_length'] = successor_values['nominal_length']
     if successor_values['start_repeat'] is not None:
         successor_values['start_repeat'] = False
     if successor_values['end_repeat'] is not None:
@@ -183,8 +183,7 @@ def make_default_successor(
                 successor_values['next'] = [successor_values['count'] + 1]
             elif isinstance(old_next_value, str):
                 assert number_field_is_present, ("Cannot created default 'next' field with strings because 'number' is "
-                                                 "") \
-                                                "not specified."
+                                                 "not specified.")
                 successor_values['next'] = [str(successor_values['number'] + 1)]
             else:
                 raise TypeError(f"Unexpected type of 'next' field item: {type(old_next_value)!r}: {old_next_value!r}")
@@ -192,16 +191,67 @@ def make_default_successor(
     return successor
 
 
+# endregion Measure
+# region MeasureMap
+
+@runtime_checkable
+class PMeasureMap(Protocol):
+    entries: Sequence[PMeasure]
+
+    def __iter__(self) -> Iterator[PMeasure]:
+        ...
+
+
+@dataclass()
+class MeasureMap(PMeasureMap):
+    entries: List[Measure]
+
+    def __post_init__(self):
+        assert len(self.entries) > 1, "A MeasureMap must contain at least two entries."
+        if any(not isinstance(entry, Measure) for entry in self.entries):
+            raise TypeError(f"Entries must be of type Measure.")
+
+    def __iter__(self) -> Iterator[Measure]:
+        yield from self.entries
+
+    @classmethod
+    def from_dicts(
+            cls,
+            sequence_of_dicts: dict
+    ):
+        entries = [Measure(**d) for d in sequence_of_dicts]
+        return cls(entries)
+
+    @classmethod
+    def from_json_file(
+            cls,
+            filepath: str
+    ):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            mm_json = json.load(f)
+        return cls.from_dicts(mm_json)
+
+
 if __name__ == '__main__':
     parent = os.path.dirname(os.path.dirname(__file__))
     mm_paths = collect_measure_maps(parent)
     for mm_path in mm_paths:
         print(mm_path)
-        with open(mm_path, 'r', encoding='utf-8') as f:
-            mm = json.load(f)
-        for measure in mm:
-            try:
-                Measure(**measure)
-            except Exception as e:
-                print(f"Validation of {measure} failed with:\n{e!r}")
-
+        MM = MeasureMap.from_json_file(mm_path)
+        # prototype of compression algorithm:
+        previous_measure = None
+        for measure in MM:
+            if previous_measure is None:
+                previous_measure = measure
+                continue
+            default_successor = previous_measure.get_default_successor()
+            if measure == default_successor:
+                print(f"MC {measure.count} can be re-generated from its predecessor.")
+            else:
+                print(
+                    f"MC {measure.count} cannot be re-generated from its predecessor.\n"
+                    f"Displaying (predecessor MC {previous_measure.count}, default successor, actual successor MC"
+                    f" {measure.count}):"
+                    f"\n\t{previous_measure}\n\t{default_successor}\n\t{measure}"
+                    )
+            previous_measure = measure

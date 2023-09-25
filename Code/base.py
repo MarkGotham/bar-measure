@@ -85,6 +85,19 @@ class Measure(PMeasure):
         if self.next is not None:
             self.next = list(self.next)
 
+    def get_actual_length(self) -> float:
+        """Returns the actual length of the measure in quarter notes, falling back to .get_nominal_length() if the
+        actual_length is not specified.
+
+        Raises:
+            ValueError:
+                If neither the actual_length nor the nominal_length is specified.
+
+        """
+        if self.actual_length is not None:
+            return float(self.actual_length)
+        return time_signature2nominal_length(self.time_signature)
+
     def get_default_successor(
             self,
             ignore_ids: bool = False
@@ -127,13 +140,15 @@ def make_default_successor(
     if successor_values["qstamp"] is not None:
         # in order to compute the subsequent qstamp, we need to know the nominal length of the current measure
         try:
-            nominal_length = measure.get_nominal_length()
+            actual_length = measure.get_actual_length()
         except ValueError as e:
             raise ValueError(
                 f"Cannot compute the successor's 'qstamp' because the nominal_length is not "
                 f"specified and cannot be determined from 'time_signature' = {measure.time_signature}."
             ) from e
-        successor_values["qstamp"] += nominal_length
+        successor_values["qstamp"] += actual_length
+    if successor_values['actual_length'] is not None:
+        successor_values['actual_length'] = measure.get_nominal_length()
     if ignore_ids:
         successor_values['ID'] = None
     count_field_is_present = successor_values['count'] is not None

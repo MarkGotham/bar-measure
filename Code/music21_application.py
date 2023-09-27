@@ -14,7 +14,9 @@ https://creativecommons.org/licenses/by-sa/4.0/
 ABOUT:
 ===============================
 The measure map processing is platform neutral.
-This module implements demonstration using music21.
+This module implements demonstration using music21:
+- creation of measure maps from files in any format that music21 can parse (e.g., musicXML),
+- attempts to fix score in-place based on the measure map diagnosis comparison
 
 """
 
@@ -27,8 +29,8 @@ from pathlib import Path
 from music21 import bar, clef, converter, key, meter, stream
 from typing import Dict
 
-from Code import measuring_bars
-from Code import REPO_FOLDER
+from . import measuring_bars
+from . import REPO_FOLDER
 
 
 # ------------------------------------------------------------------------------
@@ -87,7 +89,10 @@ class Aligner:
             self.attempt_fix()
 
         if write_diagnosis:
-            self.write_diagnosis()
+            measuring_bars.write_diagnosis(
+                self.comparison.diagnosis,
+                outpath=self.path_to_preferred.parent
+            )
 
     def write_mm(self, outpath: Path = None):
         """Write the measure maps"""
@@ -100,37 +105,6 @@ class Aligner:
 
         write_measure_map(self.preferred_measure_map, outpath=preferred_outpath)
         write_measure_map(self.other_measure_map, outpath=other_outpath)
-
-    def write_diagnosis(self, outpath: Path = None):
-        """Write the diagnosis (suggested modifications to the `other` source) in a text file"""
-        if outpath is None:
-            outpath = self.path_to_other.parent
-        with open(outpath / "other_modifications.txt", "w") as file:
-            if self.error:
-                for x in range(len(self.error[0][1])):
-                    """print(f"Preferred: {Error[0][1][x]}")
-                    print(f"Other: {Error[0][2][x]}")
-                    print("")"""  # TODO: remove
-                file.write("Could not align the two sources. Best alignment based on Needleman-Wunsch algorithm:\n")
-                file.write(f"Preferred measure map aligned: {self.error[0][1]}\n")
-                file.write(f"Other measure map aligned: {self.error[0][2]}\n")
-            else:
-                file.write("Changes to be made to secondary measure map:\n")
-                for change in self.comparison.diagnosis:
-                    if change[0] == "Join":
-                        file.write(f" - Join measures {change[1]} and {change[1] + 1}.\n")
-                    elif change[0] == "Split":
-                        file.write(f" - Split measure {change[1]} at qstamp {change[2]}.\n")
-                    elif change[0] == "Expand_Repeats":
-                        file.write(" - Expand the repeats.\n")
-                    elif change[0] == "Renumber":
-                        file.write(" - Renumber the measures.\n")
-                    elif change[0] == "Repeat_Marks":
-                        file.write(f" - Add {change[2]} repeat marks to measure {change[1]}.\n")
-                    elif change[0] == "Measure_Length":
-                        file.write(f" - Change measure {change[1]} actual length to {change[2]}.\n")
-                    elif change[0] == "Time_Signature":
-                        file.write(f" - Change measure {change[1]} time signature to {change[2]}.\n")
 
     def attempt_fix(self):
         for change in self.comparison.diagnosis:  # TODO: multiple parts?

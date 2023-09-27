@@ -557,4 +557,14 @@ def run_corpus(
 # ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    run_corpus()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--run_corpus", action="store_true", )
+
+    args = parser.parse_args()
+    if args.run_corpus:
+        run_corpus()
+    else:
+        parser.print_help()

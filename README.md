@@ -1,5 +1,11 @@
+# MOVE ALONG PLEASE [The `bar-measure` repo]
 
-# The `bar-measure` repo
+Move along please!
+This repo is now only for archive an re-direct.
+It was the catalyst for, and has been superseded by,
+[this org](https://github.com/measure-map)
+and especially [this repo](https://github.com/measure-map/pyMeasureMap).
+Move along now, nothing to see here. 
 
 ## Motivation
 
